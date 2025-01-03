@@ -1,10 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 import styled from 'styled-components';
-import { Menu, X, LogOut, User } from 'lucide-react';
+import { Menu, X, LogOut, User, Sun, Moon } from 'lucide-react';
 
-const Nav = styled.nav`
-  background-color: #1e3a8a;
+interface NavigationProps {
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+}
+
+interface NavLinkProps extends LinkProps {
+  isDarkMode: boolean;
+}
+
+interface StyledProps {
+  isDarkMode: boolean;
+}
+
+const Nav = styled.nav<StyledProps>`
+  background-color: ${props => props.isDarkMode ? '#1a202c' : '#1e3a8a'};
   padding: 0.75rem 1rem;
   position: fixed;
   top: 0;
@@ -12,6 +25,7 @@ const Nav = styled.nav`
   right: 0;
   z-index: 1000;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
 `;
 
 const NavContainer = styled.div`
@@ -41,7 +55,7 @@ const NavItems = styled.div`
   align-items: center;
 `;
 
-const NavList = styled.ul<{ isOpen: boolean }>`
+const NavList = styled.ul<{ isOpen: boolean } & StyledProps>`
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -53,7 +67,7 @@ const NavList = styled.ul<{ isOpen: boolean }>`
     top: 100%;
     left: 0;
     right: 0;
-    background-color: #1e3a8a;
+    background-color: ${props => props.isDarkMode ? '#2d3748' : '#1e3a8a'};
     display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
     padding: 1rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
@@ -68,8 +82,8 @@ const NavItem = styled.li`
   }
 `;
 
-const NavLink = styled(Link)`
-  color: white;
+const NavLink = styled(Link)<NavLinkProps>`
+  color: ${props => props.isDarkMode ? '#e2e8f0' : 'white'};
   text-decoration: none;
   font-weight: 500;
   padding: 0.5rem 1rem;
@@ -77,7 +91,7 @@ const NavLink = styled(Link)`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: ${props => props.isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.2)'};
   }
 `;
 
@@ -96,84 +110,78 @@ const HamburgerButton = styled.button`
 
 const UserSection = styled.div`
   position: relative;
+  display: flex;
+  align-items: center;
 `;
 
-const UserAvatar = styled.button`
+const UserAvatar = styled.button<StyledProps>`
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: #4a5568;
+  background-color: ${props => props.isDarkMode ? '#4a5568' : '#4a5568'};
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
+  margin-left: 10px;
 `;
 
-const UserDropdown = styled.div<{ isOpen: boolean }>`
+const UserDropdown = styled.div<{ isOpen: boolean } & StyledProps>`
   position: absolute;
   top: 100%;
   right: 0;
-  background-color: white;
+  background-color: ${props => props.isDarkMode ? '#2d3748' : 'white'};
   border-radius: 4px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
   z-index: 1000;
-
-  @media (max-width: 768px) {
-    position: static;
-    background-color: transparent;
-    box-shadow: none;
-    display: block;
-  }
 `;
 
-const DropdownItem = styled(Link)`
+const DropdownItem = styled(Link)<NavLinkProps>`
   display: block;
   padding: 0.5rem 1rem;
-  color: #2d3748;
+  color: ${props => props.isDarkMode ? '#e2e8f0' : '#2d3748'};
   text-decoration: none;
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #f7fafc;
-  }
-
-  @media (max-width: 768px) {
-    color: white;
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-    }
+    background-color: ${props => props.isDarkMode ? '#4a5568' : '#f7fafc'};
   }
 `;
 
-const LogoutButton = styled.button`
+const LogoutButton = styled.button<StyledProps>`
   display: flex;
   align-items: center;
   width: 100%;
   padding: 0.5rem 1rem;
   background: none;
   border: none;
-  color: #e74c3c;
+  color: ${props => props.isDarkMode ? '#fc8181' : '#e74c3c'};
   cursor: pointer;
   font-size: 1rem;
   text-align: left;
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #f7fafc;
-  }
-
-  @media (max-width: 768px) {
-    color: white;
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-    }
+    background-color: ${props => props.isDarkMode ? '#4a5568' : '#f7fafc'};
   }
 `;
 
-const Navigation: React.FC = () => {
+const ThemeToggle = styled.button<StyledProps>`
+  background: none;
+  border: none;
+  color: ${props => props.isDarkMode ? '#e2e8f0' : 'white'};
+  cursor: pointer;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+`;
+
+const Navigation: React.FC<NavigationProps> = ({ isDarkMode, toggleTheme }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
@@ -201,7 +209,7 @@ const Navigation: React.FC = () => {
   }, []);
 
   return (
-    <Nav>
+    <Nav isDarkMode={isDarkMode}>
       <NavContainer>
         <Logo to="/">
           <LogoImage
@@ -214,37 +222,40 @@ const Navigation: React.FC = () => {
           <HamburgerButton onClick={toggleMenu}>
             {isOpen ? <X /> : <Menu />}
           </HamburgerButton>
-          <NavList isOpen={isOpen}>
+          <NavList isOpen={isOpen} isDarkMode={isDarkMode}>
             {isLoggedIn ? (
               <>
-                <NavItem><NavLink to="/">Home</NavLink></NavItem>
-                <NavItem><NavLink to="/learners">Learners</NavLink></NavItem>
-                <NavItem><NavLink to="/roommates">Roommates</NavLink></NavItem>
-                <NavItem><NavLink to="/chat">Chat</NavLink></NavItem>
-                <NavItem>
-                  <UserSection ref={userDropdownRef}>
-                    <UserAvatar onClick={toggleUserDropdown}>
-                      <User size={18} />
-                    </UserAvatar>
-                    <UserDropdown isOpen={isUserDropdownOpen}>
-                      <DropdownItem to="/profile">My Profile</DropdownItem>
-                      <LogoutButton onClick={handleLogout}>
-                        <LogOut size={18} style={{ marginRight: '5px' }} />
-                        Logout
-                      </LogoutButton>
-                    </UserDropdown>
-                  </UserSection>
-                </NavItem>
+                <NavItem><NavLink to="/" isDarkMode={isDarkMode}>Home</NavLink></NavItem>
+                <NavItem><NavLink to="/learners" isDarkMode={isDarkMode}>Learners</NavLink></NavItem>
+                <NavItem><NavLink to="/roommates" isDarkMode={isDarkMode}>Roommates</NavLink></NavItem>
+                <NavItem><NavLink to="/chat" isDarkMode={isDarkMode}>Chat</NavLink></NavItem>
               </>
             ) : (
               <>
-                <NavItem><NavLink to="/about-us">About Us</NavLink></NavItem>
-                <NavItem><NavLink to="/contact-us">Contact Us</NavLink></NavItem>
-                <NavItem><NavLink to="/login">Login</NavLink></NavItem>
-                <NavItem><NavLink to="/signup">Sign Up</NavLink></NavItem>
+                <NavItem><NavLink to="/about" isDarkMode={isDarkMode}>About Us</NavLink></NavItem>
+                <NavItem><NavLink to="/contact" isDarkMode={isDarkMode}>Contact Us</NavLink></NavItem>
+                <NavItem><NavLink to="/login" isDarkMode={isDarkMode}>Login</NavLink></NavItem>
+                <NavItem><NavLink to="/signup" isDarkMode={isDarkMode}>Sign Up</NavLink></NavItem>
               </>
             )}
           </NavList>
+          {isLoggedIn && (
+            <UserSection ref={userDropdownRef}>
+              <UserAvatar onClick={toggleUserDropdown} isDarkMode={isDarkMode}>
+                <User size={18} />
+              </UserAvatar>
+              <UserDropdown isOpen={isUserDropdownOpen} isDarkMode={isDarkMode}>
+                <DropdownItem to="/profile" isDarkMode={isDarkMode}>My Profile</DropdownItem>
+                <LogoutButton onClick={handleLogout} isDarkMode={isDarkMode}>
+                  <LogOut size={18} style={{ marginRight: '5px' }} />
+                  Logout
+                </LogoutButton>
+              </UserDropdown>
+            </UserSection>
+          )}
+          <ThemeToggle onClick={toggleTheme} isDarkMode={isDarkMode}>
+            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+          </ThemeToggle>
         </NavItems>
       </NavContainer>
     </Nav>
@@ -252,4 +263,3 @@ const Navigation: React.FC = () => {
 };
 
 export default Navigation;
-

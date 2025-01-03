@@ -119,8 +119,8 @@ const FeatureCard = styled(motion.div)`
 `;
 
 const FeatureIcon = styled.img`
-  width: 64px;
-  height: 64px;
+  width: 300px;
+  height: 250px;
   margin-bottom: 1rem;
 `;
 
@@ -141,7 +141,7 @@ const HomePage: React.FC = () => {
       <Hero>
         <HeroTitle>Welcome to PeerPal</HeroTitle>
         <HeroSubtitle>Connect, Learn, and Find Your Perfect Match</HeroSubtitle>
-        <CTAButton to="/signup">Get Started</CTAButton>
+        <CTAButton to="/learners">Get Started</CTAButton>
       </Hero>
 
       <SectionContainer>
@@ -152,7 +152,11 @@ const HomePage: React.FC = () => {
         >
           <SectionTitle>Find Learning Partners</SectionTitle>
           <SectionContent>
-            <SectionImage src="/placeholder.svg?height=300&width=300" alt="Students studying together" />
+            <SectionImage
+              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735882967/DALL_E_2025-01-03_11.12.56_-_An_illustration_of_students_connecting_and_collaborating_sitting_around_a_digital_globe_symbolizing_global_academic_networking._They_are_shown_using_ptkpjj.webp"
+              style={{ height: '250px', width: '300px' }}
+              alt="Students studying together"
+            />
             <SectionText>
               Connect with peers who share your academic interests and goals. Create or join study groups, collaborate on projects, and excel together.
             </SectionText>
@@ -167,7 +171,11 @@ const HomePage: React.FC = () => {
         >
           <SectionTitle>Find Your Ideal Roommate</SectionTitle>
           <SectionContent>
-            <SectionImage src="/placeholder.svg?height=300&width=300" alt="Happy roommates" />
+            <SectionImage
+              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735883150/DALL_E_2025-01-03_11.16.03_-_An_illustration_of_two_or_three_young_people_happily_moving_into_a_shared_living_space._The_scene_shows_cozy_well-decorated_rooms_with_suitcases_pla_ko5gzg.webp"
+              style={{ height: '250px', width: '300px' }}
+              alt="Happy roommates"
+            />
             <SectionText>
               Discover compatible roommates who match your lifestyle and preferences. Make your living situation comfortable and enjoyable.
             </SectionText>
@@ -181,7 +189,11 @@ const HomePage: React.FC = () => {
           whileHover={{ y: -10 }}
           transition={{ type: 'spring', stiffness: 300 }}
         >
-          <FeatureIcon src="/placeholder.svg?height=64&width=64" alt="Chat icon" />
+          <FeatureIcon
+            src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735829231/Screenshot_2025-01-02_201548_pedyb9.png"
+            style={{ height: '250px', width: '240px' }}
+            alt="Chat icon"
+          />
           <FeatureTitle>Instant Messaging</FeatureTitle>
           <FeatureText>Communicate easily with your connections through our built-in chat system.</FeatureText>
         </FeatureCard>
@@ -190,7 +202,11 @@ const HomePage: React.FC = () => {
           whileHover={{ y: -10 }}
           transition={{ type: 'spring', stiffness: 300 }}
         >
-          <FeatureIcon src="/placeholder.svg?height=64&width=64" alt="Profile icon" />
+          <FeatureIcon
+            src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735882870/DALL_E_2025-01-03_11.07.18_-_A_visually_appealing_and_modern_icon_for_a_user_profile_featuring_a_simplistic_and_clean_design._The_icon_includes_a_circular_outline_containing_a_hu_shtq1x.webp"
+            style={{ height: '250px', width: '240px' }}
+            alt="Profile icon"
+          />
           <FeatureTitle>Detailed Profiles</FeatureTitle>
           <FeatureText>Create comprehensive profiles to find the best matches for your needs.</FeatureText>
         </FeatureCard>
@@ -199,7 +215,11 @@ const HomePage: React.FC = () => {
           whileHover={{ y: -10 }}
           transition={{ type: 'spring', stiffness: 300 }}
         >
-          <FeatureIcon src="/placeholder.svg?height=64&width=64" alt="Search icon" />
+          <FeatureIcon
+            src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735882873/DALL_E_2025-01-03_11.07.13_-_An_elegant_and_modern_icon_representing_advanced_search_functionality._The_design_should_include_a_magnifying_glass_with_intricate_patterns_overlayin_i38rf4.webp"
+            style={{ height: '250px', width: '240px' }}
+            alt="Search icon"
+          />
           <FeatureTitle>Advanced Search</FeatureTitle>
           <FeatureText>Find exactly what you're looking for with our powerful search filters.</FeatureText>
         </FeatureCard>
@@ -208,7 +228,11 @@ const HomePage: React.FC = () => {
           whileHover={{ y: -10 }}
           transition={{ type: 'spring', stiffness: 300 }}
         >
-          <FeatureIcon src="/placeholder.svg?height=64&width=64" alt="Security icon" />
+          <FeatureIcon
+            src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735882871/DALL_E_2025-01-03_11.10.47_-_A_modern_minimalist_illustration_of_a_secure_digital_vault_with_a_shield_icon_and_a_padlock_symbolizing_safety_and_security._The_background_should_h_xxdins.webp"
+            style={{ height: '250px', width: '240px' }}
+            alt="Security icon"
+          />
           <FeatureTitle>Safe and Secure</FeatureTitle>
           <FeatureText>Your privacy and security are our top priorities. Connect with confidence.</FeatureText>
         </FeatureCard>
@@ -218,4 +242,3 @@ const HomePage: React.FC = () => {
 };
 
 export default HomePage;
-

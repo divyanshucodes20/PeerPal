@@ -1,138 +1,203 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { Search, Plus, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { DefaultTheme } from 'styled-components';
 
-const RoommatesContainer = styled.div`
+const StyledSearch = styled(Search)`
+  color: ${props => props.theme.text};
+`;
+
+const SectionContainer = styled.div`
+  padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
 `;
 
-const SectionTitle = styled.h2`
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-`;
-
-const QueryGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 2rem;
 `;
 
-const QueryCard = styled.div`
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const QueryTitle = styled.h3`
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-`;
-
-const QueryDescription = styled.p`
-  font-size: 1rem;
-  color: #666;
-`;
-
-const Form = styled.form`
+const SearchContainer = styled.div<{ theme: DefaultTheme }>`
   display: flex;
-  flex-direction: column;
-  max-width: 500px;
-  margin-top: 2rem;
-`;
-
-const Input = styled.input`
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  font-size: 1rem;
-`;
-
-const TextArea = styled.textarea`
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  font-size: 1rem;
-  min-height: 100px;
-`;
-
-const Button = styled.button`
+  align-items: center;
+  background-color: ${props => props.theme.background};
+  border: 1px solid ${props => props.theme.primary};
+  border-radius: 20px;
   padding: 0.5rem 1rem;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
+  flex-grow: 1;
+  max-width: 400px;
+`;
 
-  &:hover {
-    background-color: #2980b9;
+const SearchInput = styled.input`
+  border: none;
+  background-color: transparent;
+  margin-left: 0.5rem;
+  flex-grow: 1;
+  color: ${props => props.theme.text};
+  &:focus {
+    outline: none;
   }
 `;
 
-interface RoommateQuery {
+const CreateRequestButton = styled(Link)`
+  display: flex;
+  align-items: center;
+  background-color: ${props => props.theme.primary};
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${props => props.theme.primary}dd;
+  }
+`;
+
+const CardsContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+`;
+
+const Card = styled.div`
+  background-color: ${props => props.theme.background};
+  border: 1px solid ${props => props.theme.primary}33;
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const Avatar = styled.img`
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+`;
+
+const Location = styled.h3`
+  margin: 0 0 0.5rem 0;
+  color: ${props => props.theme.primary};
+  display: flex;
+  align-items: center;
+`;
+
+const Description = styled.p`
+  margin: 0 0 1rem 0;
+  color: ${props => props.theme.text};
+  flex-grow: 1;
+`;
+
+const EmptySpace = styled.div`
+  height: 1rem;
+`;
+
+const JoinButton = styled.button`
+  background-color: ${props => props.theme.primary};
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${props => props.theme.primary}dd;
+  }
+`;
+
+interface RoommateRequest {
   id: number;
   location: string;
   description: string;
+  avatar: string;
 }
 
+const dummyData: RoommateRequest[] = [
+  {
+    id: 1,
+    location: "University Hostel A",
+    description: "Looking for a quiet and studious roommate for the upcoming semester.",
+    avatar: "https://i.pravatar.cc/60?img=1",
+  },
+  {
+    id: 2,
+    location: "Downtown Apartment",
+    description: "Seeking a roommate to share a 2-bedroom apartment in the city center.",
+    avatar: "https://i.pravatar.cc/60?img=2",
+  },
+  {
+    id: 3,
+    location: "Off-campus House",
+    description: "Group of 3 students looking for a 4th roommate in a shared house near campus.",
+    avatar: "https://i.pravatar.cc/60?img=3",
+  },
+  {
+    id: 4,
+    location: "Graduate Student Housing",
+    description: "PhD student seeking a roommate in the graduate student housing complex.",
+    avatar: "https://i.pravatar.cc/60?img=4",
+  },
+];
+
 const RoommatesSection: React.FC = () => {
-  const [queries, setQueries] = useState<RoommateQuery[]>([
-    { id: 1, location: "Looking for a roommate in NYC", description: "Seeking a responsible roommate for a 2-bedroom apartment in Manhattan." },
-    { id: 2, location: "Need a roommate in San Francisco", description: "Looking for a tech-savvy roommate to share a modern apartment in SoMa." },
-  ]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [requests, setRequests] = useState<RoommateRequest[]>(dummyData);
 
-  const [newQuery, setNewQuery] = useState<Omit<RoommateQuery, 'id'>>({
-    location: '',
-    description: '',
-  });
+  const filteredRequests = requests.filter(request =>
+    request.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    request.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const id = queries.length + 1;
-    setQueries([...queries, { ...newQuery, id }]);
-    setNewQuery({ location: '', description: '' });
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setNewQuery({ ...newQuery, [name]: value });
+  const handleJoin = (id: number) => {
+    console.log(`Joined request with id: ${id}`);
   };
 
   return (
-    <RoommatesContainer>
-      <SectionTitle>Available Roommate Queries</SectionTitle>
-      <QueryGrid>
-        {queries.map((query) => (
-          <QueryCard key={query.id}>
-            <QueryTitle>{query.location}</QueryTitle>
-            <QueryDescription>{query.description}</QueryDescription>
-          </QueryCard>
+    <SectionContainer>
+      <Header>
+        <SearchContainer>
+          <StyledSearch size={20} />
+          <SearchInput
+            type="text"
+            placeholder="Search roommate requests..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </SearchContainer>
+        <CreateRequestButton to="/request/roommate">
+          <Plus size={20} style={{ marginRight: '0.5rem' }} />
+          Create Request
+        </CreateRequestButton>
+      </Header>
+      <CardsContainer>
+        {filteredRequests.map(request => (
+          <Card key={request.id}>
+            <Avatar src={request.avatar} alt="Avatar" />
+            <Location>
+              <MapPin size={16} style={{ marginRight: '0.5rem' }} />
+              {request.location}
+            </Location>
+            <Description>{request.description}</Description>
+            <EmptySpace />
+            <JoinButton onClick={() => handleJoin(request.id)}>Join</JoinButton>
+          </Card>
         ))}
-      </QueryGrid>
-
-      <SectionTitle>Add Your Query</SectionTitle>
-      <Form onSubmit={handleSubmit}>
-        <Input
-          type="text"
-          name="location"
-          placeholder="Location (e.g., Looking for a roommate in New York)"
-          value={newQuery.location}
-          onChange={handleInputChange}
-          required
-        />
-        <TextArea
-          name="description"
-          placeholder="Description (e.g., Looking for a clean, responsible roommate)"
-          value={newQuery.description}
-          onChange={handleInputChange}
-          required
-        />
-        <Button type="submit">Submit Query</Button>
-      </Form>
-    </RoommatesContainer>
+      </CardsContainer>
+    </SectionContainer>
   );
 };
 
 export default RoommatesSection;
-
