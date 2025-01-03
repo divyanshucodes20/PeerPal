@@ -1,18 +1,73 @@
-import React, { useState } from "react";
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
+const ContactContainer = styled.div`
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: ${({ theme }) => theme.background};
+  color: ${({ theme }) => theme.color};
+  text-align: center;
+`;
 
-const ContactUs = () => {
+const Heading = styled.h1`
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: ${({ theme }) => theme.background};
+  color: ${({ theme }) => theme.color};
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: ${({ theme }) => theme.background};
+  color: ${({ theme }) => theme.color};
+`;
+
+const Button = styled.button`
+  padding: 0.8rem;
+  background-color:  #2ecc71;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: green;
+  }
+`;
+
+const ContactUs: React.FC = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
   });
 
- const navigate=useNavigate();
-const server = "http://localhost:5000";
+  const navigate = useNavigate();
+  const server = 'http://localhost:5000';
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,115 +77,62 @@ const server = "http://localhost:5000";
     e.preventDefault();
     try {
       const response = await fetch(`${server}/api/v1/contact`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
       const result = await response.json();
       if (result.success) {
-        toast.success("Message sent successfully!");
-        navigate("/thankyou");
+        toast.success('Message sent successfully!');
+        navigate('/thankyou');
       } else {
-        alert("Failed to send the message. Try again later.");
+        alert('Failed to send the message. Try again later.');
       }
     } catch (error) {
-      console.error("Error sending message:", error);
-      alert("An error occurred. Please try again.");
+      console.error('Error sending message:', error);
+      alert('An error occurred. Please try again.');
     }
   };
 
-  const containerStyle: React.CSSProperties = {
-    maxWidth: "600px",
-    margin: "2rem auto",
-    padding: "1rem",
-    textAlign: "center",
-    fontFamily: "Arial, sans-serif",
-  };
-
-  const headingStyle: React.CSSProperties = {
-    fontSize: "2.5rem",
-    marginBottom: "1rem",
-    color: "#333",
-  };
-
-  const formStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1rem",
-  };
-
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "0.8rem",
-    border: "1px solid #ccc",
-    borderRadius: "5px",
-    fontSize: "1rem",
-  };
-
-  const buttonStyle: React.CSSProperties = {
-    padding: "0.8rem",
-    backgroundColor: "#007bff",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    fontSize: "1rem",
-    cursor: "pointer",
-  };
-
-  const buttonHoverStyle: React.CSSProperties = {
-    backgroundColor: "#0056b3",
-  };
-
   return (
-    <div style={containerStyle}>
-      <h1 style={headingStyle}>Contact Us</h1>
-      <form style={formStyle} onSubmit={handleSubmit}>
-        <input
+    <ContactContainer>
+      <Heading>Contact Us</Heading>
+      <Form onSubmit={handleSubmit}>
+        <Input
           type="text"
           name="name"
           placeholder="Your Name"
           value={formData.name}
           onChange={handleChange}
-          style={inputStyle}
           required
         />
-        <input
+        <Input
           type="email"
           name="email"
           placeholder="Your Email"
           value={formData.email}
           onChange={handleChange}
-          style={inputStyle}
           required
         />
-        <input
+        <Input
           type="text"
           name="subject"
           placeholder="Subject"
           value={formData.subject}
           onChange={handleChange}
-          style={inputStyle}
           required
         />
-        <textarea
+        <TextArea
           name="message"
           placeholder="Your Message"
           value={formData.message}
           onChange={handleChange}
-          style={{ ...inputStyle, height: "100px" }}
           required
         />
-        <button
-          type="submit"
-          style={buttonStyle}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor!)}
-          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = buttonStyle.backgroundColor!)}
-        >
-          Send Message
-        </button>
-      </form>
-    </div>
+        <Button type="submit">Send Message</Button>
+      </Form>
+    </ContactContainer>
   );
 };
 

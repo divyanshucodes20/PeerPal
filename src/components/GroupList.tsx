@@ -49,5 +49,32 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
   );
 };
 
-export default GroupList;
+// Dummy Data for Groups
+const dummyGroups: Group[] = [
+  {
+    id: 1,
+    name: "Project Team",
+    avatar: "https://via.placeholder.com/40?text=P1",
+  },
+  {
+    id: 2,
+    name: "Study Group",
+    avatar: "https://via.placeholder.com/40?text=P2",
+  },
+  {
+    id: 3,
+    name: "Chess Club",
+    avatar: "https://via.placeholder.com/40?text=P3",
+  },
+  {
+    id: 4,
+    name: "Basketball Team",
+    avatar: "https://via.placeholder.com/40?text=P4",
+  },
+];
 
+const App = () => {
+  return <GroupList groups={dummyGroups} />;
+};
+
+export default App;

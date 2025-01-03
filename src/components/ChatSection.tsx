@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Search, Send, Plus, Settings, Users } from 'lucide-react';
 import { DefaultTheme } from 'styled-components';
@@ -178,112 +178,62 @@ const CloseButton = styled.button`
   color: ${props => props.theme.text};
 `;
 
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-const Label = styled.label`
-  color: ${props => props.theme.text};
-`;
-
-const MemberList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-`;
-
-const MemberItem = styled.li`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid ${props => props.theme.primary}33;
-`;
-
-const GroupIcon = styled(Users)`
-  color: ${props => props.theme.text};
-  cursor: pointer;
-  margin-left: 0.5rem;
-`;
-
-interface Contact {
+type Contact = {
   id: number;
   name: string;
   avatar: string;
   isGroup: boolean;
-}
+};
 
-interface Message {
-  id: number;
-  senderId: number;
-  senderName: string;
-  text: string;
-  timestamp: Date;
-}
-
-interface Group extends Contact {
-  members: { id: number; name: string; isAdmin: boolean }[];
-}
-
-const dummyContacts: Contact[] = [
+const dummyContacts = [
   { id: 1, name: "Alice", avatar: "https://via.placeholder.com/40", isGroup: false },
   { id: 2, name: "Bob", avatar: "https://via.placeholder.com/40", isGroup: false },
   { id: 3, name: "Project Team", avatar: "https://via.placeholder.com/40", isGroup: true },
   { id: 4, name: "Charlie", avatar: "https://via.placeholder.com/40", isGroup: false },
 ];
 
-const dummyMessages: Message[] = [
-  { id: 1, senderId: 1, senderName: "Alice", text: "Hey, how's it going?", timestamp: new Date() },
-  { id: 2, senderId: 0, senderName: "You", text: "Not bad, just working on a project. You?", timestamp: new Date() },
-  { id: 3, senderId: 1, senderName: "Alice", text: "Same here. Want to collaborate?", timestamp: new Date() },
-];
-
-const dummyGroups: Group[] = [
-  {
-    id: 3,
-    name: "Project Team",
-    avatar: "https://via.placeholder.com/40",
-    isGroup: true,
-    members: [
-      { id: 0, name: "You", isAdmin: true },
-      { id: 1, name: "Alice", isAdmin: false },
-      { id: 2, name: "Bob", isAdmin: false },
-    ],
-  },
+const dummyMessages = [
+  { id: 1, senderId: 1, senderName: "Alice", text: "Hey, how's it going?", timestamp: new Date(), contactId: 1 },
+  { id: 2, senderId: 0, senderName: "You", text: "Not bad, just working on a project. You?", timestamp: new Date(), contactId: 1 },
+  { id: 3, senderId: 1, senderName: "Alice", text: "Same here. Want to collaborate?", timestamp: new Date(), contactId: 1 },
+  { id: 4, senderId: 2, senderName: "Bob", text: "Hey, let's catch up soon!", timestamp: new Date(), contactId: 2 },
 ];
 
 const ChatSection: React.FC = () => {
-  const [contacts, setContacts] = useState<Contact[]>(dummyContacts);
-  const [messages, setMessages] = useState<Message[]>(dummyMessages);
-  const [groups, setGroups] = useState<Group[]>(dummyGroups);
+  const [contacts, setContacts] = useState(dummyContacts);
+  const [messages, setMessages] = useState(dummyMessages);
   const [activeContact, setActiveContact] = useState<Contact | null>(null);
   const [inputMessage, setInputMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const { id } = useParams(); // Extract contact ID from URL
   const navigate = useNavigate();
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    if (id) {
+      const selectedContact = contacts.find(contact => contact.id === parseInt(id));
+      setActiveContact(selectedContact || null);
+    }
+  }, [id, contacts]);
+
+  const filteredMessages = id ? messages.filter(message => message.contactId === parseInt(id)) : [];
 
   const handleSendMessage = () => {
     if (inputMessage.trim() && activeContact) {
-      const newMessage: Message = {
+      const newMessage = {
         id: messages.length + 1,
         senderId: 0,
         senderName: "You",
         text: inputMessage,
         timestamp: new Date(),
+        contactId: activeContact.id,
       };
       setMessages([...messages, newMessage]);
       setInputMessage('');
     }
   };
 
-  const handleGroupSettings = () => {
-    if (activeContact && activeContact.isGroup) {
-      navigate(`/chat/groups/${activeContact.id}`);
-    }
+  const handleContactClick = (contactId: number) => {
+    navigate(`/chat/${contactId}`);
   };
 
   return (
@@ -300,14 +250,14 @@ const ChatSection: React.FC = () => {
           <Button onClick={() => navigate('/chat/groups/create')}>
             <Plus size={20} />
           </Button>
-          <GroupIcon size={20} onClick={() => navigate('/chat/groups')} />
+          <Users size={20} onClick={() => navigate('/chat/groups')} />
         </SearchContainer>
         <ContactList>
-          {filteredContacts.map(contact => (
+          {contacts.filter(contact => contact.name.toLowerCase().includes(searchTerm.toLowerCase())).map(contact => (
             <ContactItem
               key={contact.id}
               isActive={activeContact?.id === contact.id}
-              onClick={() => setActiveContact(contact)}
+              onClick={() => handleContactClick(contact.id)}
             >
               <Avatar src={contact.avatar} alt={`${contact.name}'s avatar`} />
               {contact.name} {contact.isGroup && "(Group)"}
@@ -321,20 +271,16 @@ const ChatSection: React.FC = () => {
             <ChatHeader>
               {activeContact.name}
               {activeContact.isGroup && (
-                <Button onClick={handleGroupSettings}>
+                <Button onClick={() => navigate(`/chat/groups/${activeContact.id}`)}>
                   <Settings size={20} />
                 </Button>
               )}
             </ChatHeader>
             <MessageList>
-              {messages.map(message => (
+              {filteredMessages.map(message => (
                 <MessageWrapper key={message.id} isSent={message.senderId === 0}>
-                  <Message isSent={message.senderId === 0}>
-                    {message.text}
-                  </Message>
-                  <MessageInfo>
-                    {message.senderName} • {message.timestamp.toLocaleTimeString()}
-                  </MessageInfo>
+                  <Message isSent={message.senderId === 0}>{message.text}</Message>
+                  <MessageInfo>{message.timestamp.toLocaleString()}</MessageInfo>
                 </MessageWrapper>
               ))}
             </MessageList>
@@ -344,7 +290,6 @@ const ChatSection: React.FC = () => {
                 placeholder="Type a message..."
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               />
               <Button onClick={handleSendMessage}>
                 <Send size={20} />
@@ -352,9 +297,7 @@ const ChatSection: React.FC = () => {
             </InputArea>
           </>
         ) : (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-            Select a contact to start chatting
-          </div>
+          <div>Select a contact to start chatting.</div>
         )}
       </ChatArea>
     </ChatContainer>
@@ -362,4 +305,3 @@ const ChatSection: React.FC = () => {
 };
 
 export default ChatSection;
-

@@ -3,10 +3,21 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-const AboutContainer = styled.div`
+interface AboutPageProps {
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+}
+
+interface StyledProps {
+  isDarkMode: boolean;
+}
+
+const AboutContainer = styled.div<StyledProps>`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  background-color: ${(props) => (props.isDarkMode ? '#2d3748' : '#ffffff')};
+  color: ${(props) => (props.isDarkMode ? '#e2e8f0' : '#2d3748')};
 `;
 
 const HeroSection = styled.section`
@@ -47,10 +58,10 @@ const Section = styled.section`
   margin-bottom: 4rem;
 `;
 
-const SectionHeading = styled.h2`
+const SectionHeading = styled.h2<StyledProps>`
   font-size: 2rem;
   margin-bottom: 1.5rem;
-  color: #2d3748;
+  color: ${(props) => (props.isDarkMode ? '#e2e8f0' : '#2d3748')};
 `;
 
 const FeatureList = styled.ul`
@@ -61,8 +72,8 @@ const FeatureList = styled.ul`
   gap: 2rem;
 `;
 
-const FeatureItem = styled(motion.li)`
-  background-color: #f7fafc;
+const FeatureItem = styled(motion.li)<StyledProps>`
+  background-color: ${(props) => (props.isDarkMode ? '#4a5568' : '#f7fafc')};
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -76,16 +87,17 @@ const ValueList = styled.ul`
   gap: 1.5rem;
 `;
 
-const ValueItem = styled(motion.li)`
-  background-color: #ebf8ff;
+const ValueItem = styled(motion.li)<StyledProps>`
+  background-color: ${(props) => (props.isDarkMode ? '#4a5568' : '#f7fafc')}; // Matching the background color
   padding: 1rem;
   border-radius: 8px;
   text-align: center;
 `;
 
-const CallToAction = styled.section`
+
+const CallToAction = styled.section<StyledProps>`
   text-align: center;
-  background-color: #f0fff4;
+  background-color: ${(props) => (props.isDarkMode ? '#2d3748' : '#f0fff4')};
   padding: 3rem;
   border-radius: 8px;
 `;
@@ -112,9 +124,9 @@ const SecondaryButton = styled(Link)`
   }
 `;
 
-const AboutPage: React.FC = () => {
+const AboutPage: React.FC<AboutPageProps> = ({ isDarkMode, toggleTheme }) => {
   return (
-    <AboutContainer>
+    <AboutContainer isDarkMode={isDarkMode}>
       <HeroSection>
         <Title>Connecting Peers, Transforming Futures</Title>
         <Subtitle>PeerPal empowers students to collaborate, learn, and grow together in an inclusive and dynamic environment.</Subtitle>
@@ -122,26 +134,26 @@ const AboutPage: React.FC = () => {
       </HeroSection>
 
       <Section>
-        <SectionHeading>Our Mission</SectionHeading>
+        <SectionHeading isDarkMode={isDarkMode}>Our Mission</SectionHeading>
         <p>At PeerPal, we believe in the power of connection. Our mission is to bring students together to achieve academic excellence, foster lifelong friendships, and prepare for the challenges of tomorrow.</p>
       </Section>
 
       <Section>
-        <SectionHeading>What PeerPal Offers</SectionHeading>
+        <SectionHeading isDarkMode={isDarkMode}>What PeerPal Offers</SectionHeading>
         <FeatureList>
-          <FeatureItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <FeatureItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} isDarkMode={isDarkMode}>
             <h3>Find Learning Partners</h3>
             <p>Collaborate with peers on projects and form study groups.</p>
           </FeatureItem>
-          <FeatureItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <FeatureItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} isDarkMode={isDarkMode}>
             <h3>Find Roommates</h3>
             <p>Discover compatible roommates for a hassle-free living experience.</p>
           </FeatureItem>
-          <FeatureItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <FeatureItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} isDarkMode={isDarkMode}>
             <h3>Chat with Peers</h3>
             <p>Stay connected with your network through seamless communication tools.</p>
           </FeatureItem>
-          <FeatureItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <FeatureItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} isDarkMode={isDarkMode}>
             <h3>Explore Groups</h3>
             <p>Join or create groups based on shared interests and goals.</p>
           </FeatureItem>
@@ -149,21 +161,21 @@ const AboutPage: React.FC = () => {
       </Section>
 
       <Section>
-        <SectionHeading>Our Values</SectionHeading>
+        <SectionHeading isDarkMode={isDarkMode}>Our Values</SectionHeading>
         <ValueList>
-          <ValueItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <ValueItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} isDarkMode={isDarkMode}>
             <h3>Collaboration</h3>
             <p>Empowering teamwork and collective success.</p>
           </ValueItem>
-          <ValueItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <ValueItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} isDarkMode={isDarkMode}>
             <h3>Inclusivity</h3>
             <p>Creating an environment where everyone belongs.</p>
           </ValueItem>
-          <ValueItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <ValueItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} isDarkMode={isDarkMode}>
             <h3>Growth</h3>
             <p>Encouraging continuous learning and personal development.</p>
           </ValueItem>
-          <ValueItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <ValueItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} isDarkMode={isDarkMode}>
             <h3>Innovation</h3>
             <p>Leveraging cutting-edge technology for better connections.</p>
           </ValueItem>
@@ -171,16 +183,16 @@ const AboutPage: React.FC = () => {
       </Section>
 
       <Section>
-        <SectionHeading>Our Journey</SectionHeading>
+        <SectionHeading isDarkMode={isDarkMode}>Our Journey</SectionHeading>
         <p>PeerPal was built to address the need for meaningful connections in the academic and personal lives of students. From connecting study partners to enabling seamless roommate searches, PeerPal continues to evolve to meet the needs of our community.</p>
       </Section>
 
-      <CallToAction>
-        <SectionHeading>Ready to Connect?</SectionHeading>
+      <CallToAction isDarkMode={isDarkMode}>
+        <SectionHeading isDarkMode={isDarkMode}>Ready to Connect?</SectionHeading>
         <p>Be a part of a community that inspires and supports you. Join PeerPal today!</p>
         <CTAButtonGroup>
           <CTAButton to="/signup">Sign Up</CTAButton>
-          <SecondaryButton to="/features">Learn More</SecondaryButton>
+          <SecondaryButton to="/contact">Contact Us</SecondaryButton>
         </CTAButtonGroup>
       </CallToAction>
     </AboutContainer>
@@ -188,4 +200,3 @@ const AboutPage: React.FC = () => {
 };
 
 export default AboutPage;
-
