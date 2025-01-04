@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { User, Mail, Lock, Edit2, Save } from 'lucide-react';
+import { User, Mail, Lock, Edit2, Save, Upload } from 'lucide-react';
 
 const ProfileContainer = styled.div`
   max-width: 600px;
@@ -21,6 +21,7 @@ const AvatarContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 2rem;
+  position: relative;
 `;
 
 const Avatar = styled.img`
@@ -83,10 +84,27 @@ const Button = styled.button`
   }
 `;
 
+const UploadButton = styled.label`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${props => props.theme.primary};
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+`;
+
 interface UserProfile {
   name: string;
   email: string;
   avatar: string;
+  isGoogleSignIn: boolean;
 }
 
 const MyProfile: React.FC = () => {
@@ -94,9 +112,11 @@ const MyProfile: React.FC = () => {
     name: 'John Doe',
     email: 'john.doe@example.com',
     avatar: '/placeholder.svg?height=150&width=150',
+    isGoogleSignIn: false, // Set this based on the user's sign-in method
   });
   const [isEditing, setIsEditing] = useState(false);
   const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -107,15 +127,24 @@ const MyProfile: React.FC = () => {
     setNewPassword(e.target.value);
   };
 
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmNewPassword(e.target.value);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Here you would typically send the updated profile to your backend
     console.log('Updated profile:', profile);
     if (newPassword) {
+      if (newPassword !== confirmNewPassword) {
+        alert('Passwords do not match');
+        return;
+      }
       console.log('New password:', newPassword);
     }
     setIsEditing(false);
     setNewPassword('');
+    setConfirmNewPassword('');
   };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,6 +155,8 @@ const MyProfile: React.FC = () => {
         setProfile(prev => ({ ...prev, avatar: reader.result as string }));
       };
       reader.readAsDataURL(file);
+      // Here you would typically upload the file to your server
+      console.log('Uploading new profile picture:', file);
     }
   };
 
@@ -133,17 +164,18 @@ const MyProfile: React.FC = () => {
     <ProfileContainer>
       <Title>My Profile</Title>
       <AvatarContainer>
-        <label htmlFor="avatar-upload">
-          <Avatar src={profile.avatar} alt="User Avatar" />
-          <input
-            id="avatar-upload"
-            type="file"
-            accept="image/*"
-            style={{ display: 'none' }}
-            onChange={handleAvatarChange}
-            disabled={!isEditing}
-          />
-        </label>
+        <Avatar src={profile.avatar} alt="User Avatar" />
+        <UploadButton htmlFor="avatar-upload">
+          <Upload size={20} />
+        </UploadButton>
+        <input
+          id="avatar-upload"
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={handleAvatarChange}
+          disabled={!isEditing}
+        />
       </AvatarContainer>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
@@ -160,35 +192,55 @@ const MyProfile: React.FC = () => {
             disabled={!isEditing}
           />
         </FormGroup>
-        <FormGroup>
-          <Label htmlFor="email">
-            <Mail size={18} />
-            Email
-          </Label>
-          <Input
-            type="email"
-            id="email"
-            name="email"
-            value={profile.email}
-            onChange={handleInputChange}
-            disabled={!isEditing}
-          />
-        </FormGroup>
-        {isEditing && (
-          <FormGroup>
-            <Label htmlFor="password">
-              <Lock size={18} />
-              Password
-            </Label>
-            <Input
-              type="password"
-              id="password"
-              name="password"
-              value={newPassword}
-              onChange={handlePasswordChange}
-              placeholder="Enter new password"
-            />
-          </FormGroup>
+        {!profile.isGoogleSignIn && (
+          <>
+            <FormGroup>
+              <Label htmlFor="email">
+                <Mail size={18} />
+                Email
+              </Label>
+              <Input
+                type="email"
+                id="email"
+                name="email"
+                value={profile.email}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+              />
+            </FormGroup>
+            {isEditing && (
+              <>
+                <FormGroup>
+                  <Label htmlFor="newPassword">
+                    <Lock size={18} />
+                    New Password
+                  </Label>
+                  <Input
+                    type="password"
+                    id="newPassword"
+                    name="newPassword"
+                    value={newPassword}
+                    onChange={handlePasswordChange}
+                    placeholder="Enter new password"
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label htmlFor="confirmNewPassword">
+                    <Lock size={18} />
+                    Confirm New Password
+                  </Label>
+                  <Input
+                    type="password"
+                    id="confirmNewPassword"
+                    name="confirmNewPassword"
+                    value={confirmNewPassword}
+                    onChange={handleConfirmPasswordChange}
+                    placeholder="Confirm new password"
+                  />
+                </FormGroup>
+              </>
+            )}
+          </>
         )}
         <Button type={isEditing ? 'submit' : 'button'} onClick={() => !isEditing && setIsEditing(true)}>
           {isEditing ? (

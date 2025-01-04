@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { Menu, X, LogOut, User, Sun, Moon } from 'lucide-react';
 
@@ -11,6 +11,7 @@ interface NavigationProps {
 
 interface StyledProps {
   isDarkMode: boolean;
+  isActive?: boolean;
 }
 
 const Nav = styled.nav<StyledProps>`
@@ -86,6 +87,7 @@ const NavLink = styled(Link)<StyledProps>`
   padding: 0.5rem 1rem;
   border-radius: 4px;
   transition: background-color 0.3s ease;
+  background-color: ${props => props.isActive ? (props.isDarkMode ? '#4a5568' : '#3b82f6') : 'transparent'};
 
   &:hover {
     background-color: ${props => props.isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.2)'};
@@ -182,6 +184,7 @@ const Navigation: React.FC<NavigationProps> = ({ isDarkMode, toggleTheme, isUser
   const [isOpen, setIsOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleUserDropdown = () => setIsUserDropdownOpen(!isUserDropdownOpen);
@@ -216,35 +219,78 @@ const Navigation: React.FC<NavigationProps> = ({ isDarkMode, toggleTheme, isUser
           <NavList isOpen={isOpen} isDarkMode={isDarkMode}>
             {isUserLoggedIn ? (
               <>
-                <NavItem><NavLink to="/" isDarkMode={isDarkMode}>Home</NavLink></NavItem>
-                <NavItem><NavLink to="/learners" isDarkMode={isDarkMode}>Learners</NavLink></NavItem>
-                <NavItem><NavLink to="/roommates" isDarkMode={isDarkMode}>Roommates</NavLink></NavItem>
-                <NavItem><NavLink to="/rides" isDarkMode={isDarkMode}>Ride Sharing</NavLink></NavItem>
-                <NavItem><NavLink to="/chat" isDarkMode={isDarkMode}>Chat</NavLink></NavItem>
-                <NavItem><NavLink to="/goals" isDarkMode={isDarkMode}>Goals</NavLink></NavItem>
+                <NavItem>
+                  <NavLink to="/" isDarkMode={isDarkMode} isActive={location.pathname === '/'}>
+                    Home
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink to="/learners" isDarkMode={isDarkMode} isActive={location.pathname === '/learners'}>
+                    Learners
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink to="/roommates" isDarkMode={isDarkMode} isActive={location.pathname === '/roommates'}>
+                    Roommates
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink to="/rides" isDarkMode={isDarkMode} isActive={location.pathname === '/rides'}>
+                    Ride Sharing
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink to="/chat" isDarkMode={isDarkMode} isActive={location.pathname === '/chat'}>
+                    Chat
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink to="/goals" isDarkMode={isDarkMode} isActive={location.pathname === '/goals'}>
+                    Goals
+                  </NavLink>
+                </NavItem>
               </>
             ) : (
               <>
-                <NavItem><NavLink to="/about" isDarkMode={isDarkMode}>About Us</NavLink></NavItem>
-                <NavItem><NavLink to="/contact" isDarkMode={isDarkMode}>Contact Us</NavLink></NavItem>
-                <NavItem><NavLink to="/login" isDarkMode={isDarkMode}>Login</NavLink></NavItem>
-                <NavItem><NavLink to="/signup" isDarkMode={isDarkMode}>Sign Up</NavLink></NavItem>
+                <NavItem>
+                  <NavLink to="/about" isDarkMode={isDarkMode} isActive={location.pathname === '/about'}>
+                    About Us
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink to="/contact" isDarkMode={isDarkMode} isActive={location.pathname === '/contact'}>
+                    Contact Us
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink to="/login" isDarkMode={isDarkMode} isActive={location.pathname === '/login'}>
+                    Login
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink to="/signup" isDarkMode={isDarkMode} isActive={location.pathname === '/signup'}>
+                    Sign Up
+                  </NavLink>
+                </NavItem>
               </>
             )}
           </NavList>
           {isUserLoggedIn && (
             <UserSection ref={userDropdownRef}>
-              <UserAvatar onClick={toggleUserDropdown} isDarkMode={isDarkMode}>
-                <User size={18} />
-              </UserAvatar>
-              <UserDropdown isOpen={isUserDropdownOpen} isDarkMode={isDarkMode}>
-                <DropdownItem to="/profile" isDarkMode={isDarkMode}>My Profile</DropdownItem>
-                <LogoutButton onClick={() => alert('Logged out!')} isDarkMode={isDarkMode}>
-                  <LogOut size={18} style={{ marginRight: '5px' }} />
-                  Logout
-                </LogoutButton>
-              </UserDropdown>
-            </UserSection>
+            <UserAvatar onClick={toggleUserDropdown} isDarkMode={isDarkMode}>
+              <User size={18} />
+            </UserAvatar>
+            <UserDropdown isOpen={isUserDropdownOpen} isDarkMode={isDarkMode}>
+              <DropdownItem to="/profile" isDarkMode={isDarkMode}>My Profile</DropdownItem>
+              <DropdownItem to="/my-learning-requests" isDarkMode={isDarkMode}>My Learning Requests</DropdownItem>
+              <DropdownItem to="/my-roommate-requests" isDarkMode={isDarkMode}>My Roommate Requests</DropdownItem>
+              <DropdownItem to="/my-ride-requests" isDarkMode={isDarkMode}>My Ride Requests</DropdownItem>
+              <LogoutButton onClick={() => alert('Logged out!')} isDarkMode={isDarkMode}>
+                <LogOut size={18} style={{ marginRight: '5px' }} />
+                Logout
+              </LogoutButton>
+            </UserDropdown>
+          </UserSection>
           )}
           <ThemeToggle onClick={toggleTheme} isDarkMode={isDarkMode}>
             {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}

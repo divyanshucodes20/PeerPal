@@ -15,6 +15,7 @@ const RidesSection = lazy(() => import('./components/RidesSection'));
 const ChatSection = lazy(() => import('./components/ChatSection'));
 const GroupList = lazy(() => import('./components/GroupList'));
 const GroupSettings = lazy(() => import('./components/GroupSettings'));
+const CreateGroup = lazy(() => import('./components/CreateGroup'));
 const AboutPage = lazy(() => import('./components/AboutUs'));
 const ContactPage = lazy(() => import('./components/ContactUs'));
 const LandingPage = lazy(() => import('./components/LandingPage'));
@@ -25,7 +26,9 @@ const GoalsSection = lazy(() => import('./components/GoalsSection'));
 const CreateLearnerRequest = lazy(() => import('./components/CreateLearnerRequest'));
 const CreateRoommateRequest = lazy(() => import('./components/CreateRoommateRequest'));
 const CreateRideRequest = lazy(() => import('./components/CreateRideRequest'));
-const CreateGroup = lazy(() => import('./components/CreateGroup'));
+const MyLearningRequests = lazy(() => import('./components/MyLearningRequests'));
+const MyRoommateRequests = lazy(() => import('./components/MyRoommateRequests'));
+const MyRideRequests = lazy(() => import('./components/MyRideRequests'));
 
 const lightTheme = {
   background: '#f7fafc',
@@ -208,6 +211,30 @@ function App() {
                   element={
                     <ProtectedRoute isAuthenticated={isUserLoggedIn}>
                       <CreateGroup />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/my-learning-requests"
+                  element={
+                    <ProtectedRoute isAuthenticated={isUserLoggedIn}>
+                      <MyLearningRequests />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/my-roommate-requests"
+                  element={
+                    <ProtectedRoute isAuthenticated={isUserLoggedIn}>
+                      <MyRoommateRequests />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/my-ride-requests"
+                  element={
+                    <ProtectedRoute isAuthenticated={isUserLoggedIn}>
+                      <MyRideRequests />
                     </ProtectedRoute>
                   }
                 />

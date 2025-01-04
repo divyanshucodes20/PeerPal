@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import { ChromeIcon as Google } from 'lucide-react';
+import { ChromeIcon as Google, Upload } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const SignupContainer = styled.div`
@@ -91,11 +91,29 @@ const SwitchOption = styled.p`
   color: #2c3e50;
 `;
 
+const FileInput = styled.input`
+  display: none;
+`;
+
+const FileInputLabel = styled.label`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #4a5568;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+`;
+
 const SignupPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const { loginWithRedirect } = useAuth0();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -108,7 +126,13 @@ const SignupPage: React.FC = () => {
     }
 
     // Implement custom signup logic here
-    console.log('Signup with:', email, password);
+    console.log('Signup with:', email, password, profilePicture);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setProfilePicture(e.target.files[0]);
+    }
   };
 
   return (
@@ -140,6 +164,16 @@ const SignupPage: React.FC = () => {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
+        />
+        <FileInputLabel htmlFor="profile-picture">
+          <Upload size={20} style={{ marginRight: '0.5rem' }} />
+          {profilePicture ? 'Change Profile Picture' : 'Upload Profile Picture'}
+        </FileInputLabel>
+        <FileInput
+          type="file"
+          id="profile-picture"
+          accept="image/*"
+          onChange={handleFileChange}
         />
         <Button
           type="submit"
