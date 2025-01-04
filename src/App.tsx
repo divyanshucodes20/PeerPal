@@ -11,6 +11,7 @@ const LoginPage = lazy(() => import('./components/LoginPage'));
 const SignupPage = lazy(() => import('./components/SignupPage'));
 const LearnersSection = lazy(() => import('./components/LearnersSection'));
 const RoommatesSection = lazy(() => import('./components/RoommatesSection'));
+const RidesSection = lazy(() => import('./components/RidesSection'));
 const ChatSection = lazy(() => import('./components/ChatSection'));
 const GroupList = lazy(() => import('./components/GroupList'));
 const GroupSettings = lazy(() => import('./components/GroupSettings'));
@@ -21,6 +22,7 @@ const MyProfile = lazy(() => import('./components/MyProfile'));
 const NotFoundPage = lazy(() => import('./components/NotFound'));
 const ThankYouPage = lazy(() => import('./components/thankyou'));
 const GoalsSection = lazy(() => import('./components/GoalsSection'));
+const CreateRideRequest = lazy(() => import('./components/CreateRideRequest'));
 
 const lightTheme = {
   background: '#f7fafc',
@@ -90,7 +92,7 @@ function App() {
                 )}
                 
                 {/* Public Routes */}
-                <Route path="/about" element={<AboutPage  isDarkMode={isDarkMode} toggleTheme={toggleTheme}  />} />
+                <Route path="/about" element={<AboutPage isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
                 <Route path="/contact" element={<ContactPage />} />
 
                 {/* Protected Routes */}
@@ -107,6 +109,14 @@ function App() {
                   element={
                     <ProtectedRoute isAuthenticated={isUserLoggedIn}>
                       <RoommatesSection />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/rides"
+                  element={
+                    <ProtectedRoute isAuthenticated={isUserLoggedIn}>
+                      <RidesSection />
                     </ProtectedRoute>
                   }
                 />
@@ -138,7 +148,7 @@ function App() {
                   path="/chat/groups"
                   element={
                     <ProtectedRoute isAuthenticated={isUserLoggedIn}>
-                      <GroupList/>
+                      <GroupList />
                     </ProtectedRoute>
                   }
                 />
@@ -158,6 +168,22 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path="/goals/:projectId"
+                  element={
+                    <ProtectedRoute isAuthenticated={isUserLoggedIn}>
+                      <GoalsSection />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/request/ride"
+                  element={
+                    <ProtectedRoute isAuthenticated={isUserLoggedIn}>
+                      <CreateRideRequest />
+                    </ProtectedRoute>
+                  }
+                />
 
                 {/* Not Logged In Routes */}
                 <Route path="/login" element={<LoginPage />} />
@@ -170,7 +196,7 @@ function App() {
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </ContentContainer>
-            <Footer isDarkMode={isDarkMode}/>
+            <Footer isDarkMode={isDarkMode} />
           </Suspense>
         </AppContainer>
       </Router>

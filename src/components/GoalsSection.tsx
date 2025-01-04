@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
@@ -11,6 +12,27 @@ const GoalsContainer = styled.div`
   margin: 0 auto;
 `;
 
+const GroupList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+`;
+
+const GroupItem = styled.li`
+  background-color: ${props => props.theme.background};
+  border: 1px solid ${props => props.theme.primary}33;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+`;
+
 const GoalForm = styled.form`
   display: flex;
   gap: 1rem;
@@ -21,6 +43,7 @@ const Input = styled.input`
   padding: 0.5rem;
   border: 1px solid ${props => props.theme.primary};
   border-radius: 4px;
+  flex-grow: 1;
 `;
 
 const Button = styled.button`
@@ -54,97 +77,189 @@ interface Goal {
   completed: boolean;
 }
 
+interface Group {
+  id: number;
+  name: string;
+  goals: Goal[];
+}
+
+const dummyGroups: Group[] = [
+  {
+    id: 1,
+    name: "Web Development Team",
+    goals: [
+      { id: 1, description: "Complete project proposal", completed: false },
+      { id: 2, description: "Set up development environment", completed: true },
+    ]
+  },
+  {
+    id: 2,
+    name: "Machine Learning Study Group",
+    goals: [
+      { id: 3, description: "Finish online course", completed: false },
+      { id: 4, description: "Implement first ML model", completed: false },
+    ]
+  },
+  {
+    id: 3,
+    name: "Mobile App Team",
+    goals: [
+      { id: 5, description: "Design user interface", completed: true },
+      { id: 6, description: "Implement core features", completed: false },
+    ]
+  }
+];
+
 const GoalsSection: React.FC = () => {
-  const [goals, setGoals] = useState<Goal[]>([]);
+  const [groups, setGroups] = useState<Group[]>(dummyGroups);
+  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
   const [newGoal, setNewGoal] = useState('');
   const [isAdmin, setIsAdmin] = useState(true); // Set this based on user role
+  const { projectId } = useParams<{ projectId: string }>();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch goals from API or local storage
-    // For now, we'll use dummy data
-    setGoals([
-      { id: 1, description: 'Complete project proposal', completed: false },
-      { id: 2, description: 'Review team member contributions', completed: true },
-      { id: 3, description: 'Schedule team meeting', completed: false },
-    ]);
-  }, []);
+    if (projectId) {
+      const group = groups.find(g => g.id === parseInt(projectId));
+      setSelectedGroup(group || null);
+    } else {
+      setSelectedGroup(null);
+    }
+  }, [projectId, groups]);
+
+  const handleGroupClick = (group: Group) => {
+    navigate(`/goals/${group.id}`);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newGoal.trim()) {
+    if (newGoal.trim() && selectedGroup) {
       const newGoalItem: Goal = {
         id: Date.now(),
         description: newGoal.trim(),
         completed: false,
       };
-      setGoals([...goals, newGoalItem]);
+      setGroups(groups.map(group => 
+        group.id === selectedGroup.id 
+          ? { ...group, goals: [...group.goals, newGoalItem] }
+          : group
+      ));
       setNewGoal('');
     }
   };
 
-  const toggleGoalCompletion = (id: number) => {
-    setGoals(goals.map(goal => 
-      goal.id === id ? { ...goal, completed: !goal.completed } : goal
-    ));
+  const toggleGoalCompletion = (goalId: number) => {
+    if (selectedGroup) {
+      setGroups(groups.map(group => 
+        group.id === selectedGroup.id
+          ? {
+              ...group,
+              goals: group.goals.map(goal => 
+                goal.id === goalId ? { ...goal, completed: !goal.completed } : goal
+              )
+            }
+          : group
+      ));
+    }
   };
 
-  const completedGoals = goals.filter(goal => goal.completed).length;
-  const totalGoals = goals.length;
-
-  const chartData = {
-    labels: ['Completed', 'Remaining'],
-    datasets: [
-      {
-        label: 'Goals',
-        data: [completedGoals, totalGoals - completedGoals],
-        backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
-      },
-    ],
+  const deleteGoal = (goalId: number) => {
+    if (selectedGroup) {
+      setGroups(groups.map(group => 
+        group.id === selectedGroup.id
+          ? {
+              ...group,
+              goals: group.goals.filter(goal => goal.id !== goalId)
+            }
+          : group
+      ));
+    }
   };
 
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
+  const renderChart = () => {
+    if (!selectedGroup) return null;
+
+    const completedGoals = selectedGroup.goals.filter(goal => goal.completed).length;
+    const totalGoals = selectedGroup.goals.length;
+
+    const chartData = {
+      labels: ['Completed', 'Remaining'],
+      datasets: [
+        {
+          label: 'Goals',
+          data: [completedGoals, totalGoals - completedGoals],
+          backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+        },
+      ],
+    };
+
+    const chartOptions = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top' as const,
+        },
+        title: {
+          display: true,
+          text: 'Goal Completion Chart',
+        },
       },
-      title: {
-        display: true,
-        text: 'Goal Completion Chart',
-      },
-    },
+    };
+
+    return (
+      <div style={{ maxWidth: '500px', margin: '2rem auto' }}>
+        <Bar data={chartData} options={chartOptions} />
+      </div>
+    );
   };
 
   return (
     <GoalsContainer>
-      <h1>Project Goals</h1>
-      {isAdmin && (
-        <GoalForm onSubmit={handleSubmit}>
-          <Input
-            type="text"
-            value={newGoal}
-            onChange={(e) => setNewGoal(e.target.value)}
-            placeholder="Enter a new goal"
-          />
-          <Button type="submit">Add Goal</Button>
-        </GoalForm>
+      <h1>My Groups</h1>
+      {!selectedGroup && (
+        <GroupList>
+          {groups.map(group => (
+            <GroupItem key={group.id} onClick={() => handleGroupClick(group)}>
+              <h3>{group.name}</h3>
+              <p>{group.goals.length} goals</p>
+            </GroupItem>
+          ))}
+        </GroupList>
       )}
-      <GoalList>
-        {goals.map(goal => (
-          <GoalItem key={goal.id}>
-            <Checkbox
-              type="checkbox"
-              checked={goal.completed}
-              onChange={() => toggleGoalCompletion(goal.id)}
-              disabled={!isAdmin}
-            />
-            {goal.description}
-          </GoalItem>
-        ))}
-      </GoalList>
-      <div style={{ maxWidth: '500px', margin: '2rem auto' }}>
-        <Bar data={chartData} options={chartOptions} />
-      </div>
+      {selectedGroup && (
+        <>
+          <h2>{selectedGroup.name} Goals</h2>
+          {isAdmin && (
+            <GoalForm onSubmit={handleSubmit}>
+              <Input
+                type="text"
+                value={newGoal}
+                onChange={(e) => setNewGoal(e.target.value)}
+                placeholder="Enter a new goal"
+              />
+              <Button type="submit">Add Goal</Button>
+            </GoalForm>
+          )}
+          <GoalList>
+            {selectedGroup.goals.map(goal => (
+              <GoalItem key={goal.id}>
+                <Checkbox
+                  type="checkbox"
+                  checked={goal.completed}
+                  onChange={() => toggleGoalCompletion(goal.id)}
+                  disabled={isAdmin}
+                />
+                {goal.description}
+                {isAdmin && (
+                  <Button onClick={() => deleteGoal(goal.id)}>Delete</Button>
+                )}
+              </GoalItem>
+            ))}
+          </GoalList>
+          {renderChart()}
+          <Button onClick={() => navigate('/goals')}>Back to Groups</Button>
+        </>
+      )}
     </GoalsContainer>
   );
 };

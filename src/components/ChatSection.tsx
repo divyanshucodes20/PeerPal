@@ -1,31 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { Search, Send, Plus, Settings, Users } from 'lucide-react';
-import { DefaultTheme } from 'styled-components';
+import { Search, Send, Plus, Settings, Users, ArrowLeft } from 'lucide-react';
 
-const StyledSearch = styled(Search)`
-  color: ${props => props.theme.text};
-`;
+interface ChatAreaProps {
+  isOpen: boolean;
+}
+
+interface ContactItemProps {
+  isActive: boolean;
+}
+
+interface MessageWrapperProps {
+  isSent: boolean;
+}
 
 const ChatContainer = styled.div`
   display: flex;
   height: calc(100vh - 60px);
   background-color: ${props => props.theme.background};
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
-const Sidebar = styled.div`
+const Sidebar = styled.div<ChatAreaProps>`
   width: 30%;
   border-right: 1px solid ${props => props.theme.primary}33;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background-color: ${props => props.theme.background};
+    display: ${props => props.isOpen ? 'flex' : 'none'};
+  }
 `;
 
-const SearchContainer = styled.div<{ theme: DefaultTheme }>`
+const ChatArea = styled.div<ChatAreaProps>`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+const SearchContainer = styled.div`
   display: flex;
   align-items: center;
   padding: 1rem;
   border-bottom: 1px solid ${props => props.theme.primary}33;
+
+  @media (max-width: 768px) {
+    position: sticky;
+    top: 0;
+    background-color: ${props => props.theme.background};
+    z-index: 11;
+  }
 `;
 
 const SearchInput = styled.input`
@@ -44,7 +84,7 @@ const ContactList = styled.div`
   overflow-y: auto;
 `;
 
-const ContactItem = styled.div<{ isActive: boolean }>`
+const ContactItem = styled.div<ContactItemProps>`
   padding: 1rem;
   cursor: pointer;
   display: flex;
@@ -62,12 +102,6 @@ const Avatar = styled.img`
   margin-right: 1rem;
 `;
 
-const ChatArea = styled.div`
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-`;
-
 const ChatHeader = styled.div`
   padding: 1rem;
   border-bottom: 1px solid ${props => props.theme.primary}33;
@@ -75,6 +109,13 @@ const ChatHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  @media (max-width: 768px) {
+    position: sticky;
+    top: 0;
+    background-color: ${props => props.theme.background};
+    z-index: 11;
+  }
 `;
 
 const MessageList = styled.div`
@@ -85,14 +126,14 @@ const MessageList = styled.div`
   flex-direction: column;
 `;
 
-const MessageWrapper = styled.div<{ isSent: boolean }>`
+const MessageWrapper = styled.div<MessageWrapperProps>`
   display: flex;
   flex-direction: column;
   align-items: ${props => props.isSent ? 'flex-end' : 'flex-start'};
   margin-bottom: 1rem;
 `;
 
-const Message = styled.div<{ isSent: boolean }>`
+const Message = styled.div<MessageWrapperProps>`
   max-width: 60%;
   padding: 0.5rem 1rem;
   border-radius: 1rem;
@@ -138,109 +179,94 @@ const Button = styled.button`
   margin-left: 1rem;
 `;
 
-const Modal = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+const ManageGroupsButton = styled(Button)`
+  background-color: #3182ce;
+  @media (max-width: 768px) {
+    margin-left: 0;
+    margin-bottom: 1rem;
+  }
+`;
+
+const BackButton = styled(Button)`
+  @media (min-width: 769px) {
+    display: none;
+  }
+`;
+
+const NoChat = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  align-items: center;
+  height: 100%;
+  text-align: center;
 `;
-
-const ModalContent = styled.div`
-  background-color: ${props => props.theme.background};
-  padding: 2rem;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 500px;
-`;
-
-const ModalHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-`;
-
-const ModalTitle = styled.h2`
-  margin: 0;
-  color: ${props => props.theme.text};
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: ${props => props.theme.text};
-`;
-
-type Contact = {
-  id: number;
-  name: string;
-  avatar: string;
-  isGroup: boolean;
-};
-
-const dummyContacts = [
-  { id: 1, name: "Alice", avatar: "https://via.placeholder.com/40", isGroup: false },
-  { id: 2, name: "Bob", avatar: "https://via.placeholder.com/40", isGroup: false },
-  { id: 3, name: "Project Team", avatar: "https://via.placeholder.com/40", isGroup: true },
-  { id: 4, name: "Charlie", avatar: "https://via.placeholder.com/40", isGroup: false },
-];
-
-const dummyMessages = [
-  { id: 1, senderId: 1, senderName: "Alice", text: "Hey, how's it going?", timestamp: new Date(), contactId: 1 },
-  { id: 2, senderId: 0, senderName: "You", text: "Not bad, just working on a project. You?", timestamp: new Date(), contactId: 1 },
-  { id: 3, senderId: 1, senderName: "Alice", text: "Same here. Want to collaborate?", timestamp: new Date(), contactId: 1 },
-  { id: 4, senderId: 2, senderName: "Bob", text: "Hey, let's catch up soon!", timestamp: new Date(), contactId: 2 },
-];
 
 const ChatSection: React.FC = () => {
-  const [contacts, setContacts] = useState(dummyContacts);
-  const [messages, setMessages] = useState(dummyMessages);
+  interface Contact {
+    id: number;
+    name: string;
+    avatar: string;
+    isGroup?: boolean;
+  }
+  
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  interface Message {
+    id: number;
+    senderId: number;
+    text: string;
+    timestamp: Date;
+  }
+
+  const [messages, setMessages] = useState<Message[]>([]);
   const [activeContact, setActiveContact] = useState<Contact | null>(null);
   const [inputMessage, setInputMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const { id } = useParams(); // Extract contact ID from URL
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Fetch contacts and messages
+    // This is where you'd typically make API calls
+    setContacts([
+      { id: 1, name: "Alice", avatar: "https://via.placeholder.com/40" },
+      { id: 2, name: "Bob", avatar: "https://via.placeholder.com/40" },
+      { id: 3, name: "Project Team", avatar: "https://via.placeholder.com/40", isGroup: true },
+    ]);
+  }, []);
+
+  useEffect(() => {
     if (id) {
-      const selectedContact = contacts.find(contact => contact.id === parseInt(id));
-      setActiveContact(selectedContact || null);
+      const contact = contacts.find(c => c.id === parseInt(id));
+      setActiveContact(contact || null);
+      // Fetch messages for this contact
+      // This is where you'd typically make an API call
     }
   }, [id, contacts]);
 
-  const filteredMessages = id ? messages.filter(message => message.contactId === parseInt(id)) : [];
-
   const handleSendMessage = () => {
     if (inputMessage.trim() && activeContact) {
-      const newMessage = {
-        id: messages.length + 1,
-        senderId: 0,
-        senderName: "You",
-        text: inputMessage,
-        timestamp: new Date(),
-        contactId: activeContact.id,
-      };
-      setMessages([...messages, newMessage]);
+      // Send message logic here
       setInputMessage('');
     }
   };
 
-  const handleContactClick = (contactId: number) => {
+  interface HandleContactClickProps {
+    contactId: number;
+  }
+
+  const handleContactClick = ({ contactId }: HandleContactClickProps) => {
     navigate(`/chat/${contactId}`);
+    setActiveContact(contacts.find(c => c.id === contactId) || null);
+    setIsSidebarOpen(false);
   };
 
   return (
     <ChatContainer>
-      <Sidebar>
+      <Sidebar isOpen={isSidebarOpen}>
         <SearchContainer>
-          <StyledSearch size={20} />
+          <Search size={20} />
           <SearchInput
             type="text"
             placeholder="Search contacts..."
@@ -250,14 +276,16 @@ const ChatSection: React.FC = () => {
           <Button onClick={() => navigate('/chat/groups/create')}>
             <Plus size={20} />
           </Button>
-          <Users size={20} onClick={() => navigate('/chat/groups')} />
+          <ManageGroupsButton onClick={() => navigate('/chat/groups')}>
+            <Users size={20} />
+          </ManageGroupsButton>
         </SearchContainer>
         <ContactList>
           {contacts.filter(contact => contact.name.toLowerCase().includes(searchTerm.toLowerCase())).map(contact => (
             <ContactItem
               key={contact.id}
               isActive={activeContact?.id === contact.id}
-              onClick={() => handleContactClick(contact.id)}
+              onClick={() => handleContactClick({ contactId: contact.id })}
             >
               <Avatar src={contact.avatar} alt={`${contact.name}'s avatar`} />
               {contact.name} {contact.isGroup && "(Group)"}
@@ -265,10 +293,13 @@ const ChatSection: React.FC = () => {
           ))}
         </ContactList>
       </Sidebar>
-      <ChatArea>
+      <ChatArea isOpen={!isSidebarOpen}>
         {activeContact ? (
           <>
             <ChatHeader>
+              <BackButton onClick={() => setIsSidebarOpen(true)}>
+                <ArrowLeft size={20} />
+              </BackButton>
               {activeContact.name}
               {activeContact.isGroup && (
                 <Button onClick={() => navigate(`/chat/groups/${activeContact.id}`)}>
@@ -277,7 +308,7 @@ const ChatSection: React.FC = () => {
               )}
             </ChatHeader>
             <MessageList>
-              {filteredMessages.map(message => (
+              {messages.map(message => (
                 <MessageWrapper key={message.id} isSent={message.senderId === 0}>
                   <Message isSent={message.senderId === 0}>{message.text}</Message>
                   <MessageInfo>{message.timestamp.toLocaleString()}</MessageInfo>
@@ -290,6 +321,7 @@ const ChatSection: React.FC = () => {
                 placeholder="Type a message..."
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               />
               <Button onClick={handleSendMessage}>
                 <Send size={20} />
@@ -297,7 +329,9 @@ const ChatSection: React.FC = () => {
             </InputArea>
           </>
         ) : (
-          <div>Select a contact to start chatting.</div>
+          <NoChat>
+            <p>Select a member or group to chat</p>
+          </NoChat>
         )}
       </ChatArea>
     </ChatContainer>

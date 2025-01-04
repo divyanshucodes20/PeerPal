@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Menu, X, LogOut, User, Sun, Moon } from 'lucide-react';
 
@@ -9,16 +9,12 @@ interface NavigationProps {
   isUserLoggedIn?: boolean;
 }
 
-interface NavLinkProps extends LinkProps {
-  isDarkMode: boolean;
-}
-
 interface StyledProps {
   isDarkMode: boolean;
 }
 
 const Nav = styled.nav<StyledProps>`
-  background-color: ${props => (props.isDarkMode ? '#1a202c' : '#1e3a8a')};
+  background-color: ${props => props.isDarkMode ? '#1a202c' : '#1e3a8a'};
   padding: 0.75rem 1rem;
   position: fixed;
   top: 0;
@@ -57,7 +53,7 @@ const NavItems = styled.div`
 `;
 
 const NavList = styled.ul<{ isOpen: boolean } & StyledProps>`
-  list-style: none;
+  list-style-type: none;
   padding: 0;
   margin: 0;
   display: flex;
@@ -68,7 +64,7 @@ const NavList = styled.ul<{ isOpen: boolean } & StyledProps>`
     top: 100%;
     left: 0;
     right: 0;
-    background-color: ${props => (props.isDarkMode ? '#2d3748' : '#1e3a8a')};
+    background-color: ${props => props.isDarkMode ? '#2d3748' : '#1e3a8a'};
     display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
     padding: 1rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
@@ -83,8 +79,8 @@ const NavItem = styled.li`
   }
 `;
 
-const NavLink = styled(Link)<NavLinkProps>`
-  color: ${props => (props.isDarkMode ? '#e2e8f0' : 'white')};
+const NavLink = styled(Link)<StyledProps>`
+  color: ${props => props.isDarkMode ? '#e2e8f0' : 'white'};
   text-decoration: none;
   font-weight: 500;
   padding: 0.5rem 1rem;
@@ -92,7 +88,7 @@ const NavLink = styled(Link)<NavLinkProps>`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: ${props => (props.isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.2)')};
+    background-color: ${props => props.isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.2)'};
   }
 `;
 
@@ -119,7 +115,7 @@ const UserAvatar = styled.button<StyledProps>`
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: ${props => (props.isDarkMode ? '#4a5568' : '#4a5568')};
+  background-color: ${props => props.isDarkMode ? '#4a5568' : '#4a5568'};
   border: none;
   cursor: pointer;
   display: flex;
@@ -133,22 +129,22 @@ const UserDropdown = styled.div<{ isOpen: boolean } & StyledProps>`
   position: absolute;
   top: 100%;
   right: 0;
-  background-color: ${props => (props.isDarkMode ? '#2d3748' : 'white')};
+  background-color: ${props => props.isDarkMode ? '#2d3748' : 'white'};
   border-radius: 4px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
   z-index: 1000;
 `;
 
-const DropdownItem = styled(Link)<NavLinkProps>`
+const DropdownItem = styled(Link)<StyledProps>`
   display: block;
   padding: 0.5rem 1rem;
-  color: ${props => (props.isDarkMode ? '#e2e8f0' : '#2d3748')};
+  color: ${props => props.isDarkMode ? '#e2e8f0' : '#2d3748'};
   text-decoration: none;
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: ${props => (props.isDarkMode ? '#4a5568' : '#f7fafc')};
+    background-color: ${props => props.isDarkMode ? '#4a5568' : '#f7fafc'};
   }
 `;
 
@@ -159,21 +155,21 @@ const LogoutButton = styled.button<StyledProps>`
   padding: 0.5rem 1rem;
   background: none;
   border: none;
-  color: ${props => (props.isDarkMode ? '#fc8181' : '#e74c3c')};
+  color: ${props => props.isDarkMode ? '#fc8181' : '#e74c3c'};
   cursor: pointer;
   font-size: 1rem;
   text-align: left;
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: ${props => (props.isDarkMode ? '#4a5568' : '#f7fafc')};
+    background-color: ${props => props.isDarkMode ? '#4a5568' : '#f7fafc'};
   }
 `;
 
 const ThemeToggle = styled.button<StyledProps>`
   background: none;
   border: none;
-  color: ${props => (props.isDarkMode ? '#e2e8f0' : 'white')};
+  color: ${props => props.isDarkMode ? '#e2e8f0' : 'white'};
   cursor: pointer;
   font-size: 1.5rem;
   display: flex;
@@ -207,7 +203,10 @@ const Navigation: React.FC<NavigationProps> = ({ isDarkMode, toggleTheme, isUser
     <Nav isDarkMode={isDarkMode}>
       <NavContainer>
         <Logo to="/">
-          <LogoImage src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735829230/Screenshot_2025-01-02_201352_qz8j84.png" alt="PeerPal Logo" />
+          <LogoImage
+            src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735829230/Screenshot_2025-01-02_201352_qz8j84.png"
+            alt="PeerPal Logo"
+          />
           PeerPal
         </Logo>
         <NavItems>
@@ -220,6 +219,7 @@ const Navigation: React.FC<NavigationProps> = ({ isDarkMode, toggleTheme, isUser
                 <NavItem><NavLink to="/" isDarkMode={isDarkMode}>Home</NavLink></NavItem>
                 <NavItem><NavLink to="/learners" isDarkMode={isDarkMode}>Learners</NavLink></NavItem>
                 <NavItem><NavLink to="/roommates" isDarkMode={isDarkMode}>Roommates</NavLink></NavItem>
+                <NavItem><NavLink to="/rides" isDarkMode={isDarkMode}>Ride Sharing</NavLink></NavItem>
                 <NavItem><NavLink to="/chat" isDarkMode={isDarkMode}>Chat</NavLink></NavItem>
                 <NavItem><NavLink to="/goals" isDarkMode={isDarkMode}>Goals</NavLink></NavItem>
               </>
