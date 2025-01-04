@@ -88,12 +88,11 @@ const ValueList = styled.ul`
 `;
 
 const ValueItem = styled(motion.li)<StyledProps>`
-  background-color: ${(props) => (props.isDarkMode ? '#4a5568' : '#f7fafc')}; // Matching the background color
+  background-color: ${(props) => (props.isDarkMode ? '#4a5568' : '#f7fafc')};
   padding: 1rem;
   border-radius: 8px;
   text-align: center;
 `;
-
 
 const CallToAction = styled.section<StyledProps>`
   text-align: center;
@@ -157,6 +156,14 @@ const AboutPage: React.FC<AboutPageProps> = ({ isDarkMode, toggleTheme }) => {
             <h3>Explore Groups</h3>
             <p>Join or create groups based on shared interests and goals.</p>
           </FeatureItem>
+          <FeatureItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} isDarkMode={isDarkMode}>
+            <h3>Ride Sharing</h3>
+            <p>Find or offer rides to fellow students for convenient and eco-friendly transportation.</p>
+          </FeatureItem>
+          <FeatureItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} isDarkMode={isDarkMode}>
+            <h3>Goal Setting</h3>
+            <p>Set and track personal and group goals to boost productivity and achievement.</p>
+          </FeatureItem>
         </FeatureList>
       </Section>
 
@@ -184,7 +191,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ isDarkMode, toggleTheme }) => {
 
       <Section>
         <SectionHeading isDarkMode={isDarkMode}>Our Journey</SectionHeading>
-        <p>PeerPal was built to address the need for meaningful connections in the academic and personal lives of students. From connecting study partners to enabling seamless roommate searches, PeerPal continues to evolve to meet the needs of our community.</p>
+        <p>PeerPal was built to address the need for meaningful connections in the academic and personal lives of students. From connecting study partners to enabling seamless roommate searches, ride sharing, and goal setting, PeerPal continues to evolve to meet the diverse needs of our community.</p>
       </Section>
 
       <CallToAction isDarkMode={isDarkMode}>
@@ -200,3 +207,4 @@ const AboutPage: React.FC<AboutPageProps> = ({ isDarkMode, toggleTheme }) => {
 };
 
 export default AboutPage;
+

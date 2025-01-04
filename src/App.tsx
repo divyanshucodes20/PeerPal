@@ -22,7 +22,10 @@ const MyProfile = lazy(() => import('./components/MyProfile'));
 const NotFoundPage = lazy(() => import('./components/NotFound'));
 const ThankYouPage = lazy(() => import('./components/thankyou'));
 const GoalsSection = lazy(() => import('./components/GoalsSection'));
+const CreateLearnerRequest = lazy(() => import('./components/CreateLearnerRequest'));
+const CreateRoommateRequest = lazy(() => import('./components/CreateRoommateRequest'));
 const CreateRideRequest = lazy(() => import('./components/CreateRideRequest'));
+const CreateGroup = lazy(() => import('./components/CreateGroup'));
 
 const lightTheme = {
   background: '#f7fafc',
@@ -177,10 +180,34 @@ function App() {
                   }
                 />
                 <Route
+                  path="/request/learner"
+                  element={
+                    <ProtectedRoute isAuthenticated={isUserLoggedIn}>
+                      <CreateLearnerRequest />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/request/roommate"
+                  element={
+                    <ProtectedRoute isAuthenticated={isUserLoggedIn}>
+                      <CreateRoommateRequest />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
                   path="/request/ride"
                   element={
                     <ProtectedRoute isAuthenticated={isUserLoggedIn}>
                       <CreateRideRequest />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/chat/create-group"
+                  element={
+                    <ProtectedRoute isAuthenticated={isUserLoggedIn}>
+                      <CreateGroup />
                     </ProtectedRoute>
                   }
                 />

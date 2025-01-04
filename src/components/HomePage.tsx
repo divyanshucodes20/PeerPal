@@ -1,8 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import { motion } from 'framer-motion';
+import React from "react";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { motion } from "framer-motion";
 
+// Styled Components
 const HomeContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
@@ -45,24 +46,35 @@ const CTAButton = styled(Link)`
 
 const SectionContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr); /* 3 items per row */
   gap: 2rem;
   margin-bottom: 4rem;
 
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* 1 item per row on smaller screens */
   }
 `;
 
 const Section = styled(motion.section)`
   background-color: #f8f9fa;
   border-radius: 10px;
-  padding: 2rem;
+  padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  min-height: 300px; /* Increased min-height */
+  max-height: auto; /* Remove max-height to allow dynamic resizing */
+  overflow: hidden; /* To hide overflowed content */
+
+  @media (min-width: 1024px) {
+    min-height: 270px; /* Adjusted for larger screens */
+  }
 `;
 
+
+
+
 const SectionTitle = styled.h2`
-  font-size: 2rem;
+  font-size: 1.5rem;
   margin-bottom: 1rem;
   color: #2c3e50;
 `;
@@ -75,7 +87,7 @@ const SectionContent = styled.div`
 
 const SectionImage = styled.img`
   width: 100%;
-  max-width: 300px;
+  max-width: 200px;
   height: auto;
   border-radius: 10px;
   margin-bottom: 1rem;
@@ -85,7 +97,6 @@ const SectionText = styled.p`
   font-size: 1rem;
   color: #34495e;
   margin-bottom: 1rem;
-  text-align: center;
 `;
 
 const SectionButton = styled(Link)`
@@ -103,140 +114,149 @@ const SectionButton = styled(Link)`
   }
 `;
 
-const FeaturesContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-bottom: 4rem;
-`;
-
-const FeatureCard = styled(motion.div)`
-  background-color: white;
-  border-radius: 10px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
-`;
-
-const FeatureIcon = styled.img`
-  width: 300px;
-  height: 250px;
-  margin-bottom: 1rem;
-`;
-
-const FeatureTitle = styled.h3`
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-  color: #2c3e50;
-`;
-
-const FeatureText = styled.p`
-  font-size: 1rem;
-  color: #34495e;
-`;
-
+// Main Component
 const HomePage: React.FC = () => {
   return (
     <HomeContainer>
+      {/* Hero Section */}
       <Hero>
         <HeroTitle>Welcome to PeerPal</HeroTitle>
         <HeroSubtitle>Connect, Learn, and Find Your Perfect Match</HeroSubtitle>
         <CTAButton to="/learners">Get Started</CTAButton>
       </Hero>
 
+      {/* Request Sections */}
       <SectionContainer>
+        <Section initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <SectionTitle>Create Learning Request</SectionTitle>
+          <SectionContent>
+            <SectionImage
+              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735882967/DALL_E_2025-01-03_11.12.56_-_An_illustration_of_students_connecting_and_collaborating_sitting_around_a_digital_globe_symbolizing_global_academic_networking._They_are_shown_using_ptkpjj.webp"
+              alt="Learning request"
+            />
+            <SectionText>Connect with peers who share your academic interests and goals.</SectionText>
+            <SectionButton to="/request/learner">Create Request</SectionButton>
+          </SectionContent>
+        </Section>
+
+        <Section initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+          <SectionTitle>Create Roommate Request</SectionTitle>
+          <SectionContent>
+            <SectionImage
+              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735883150/DALL_E_2025-01-03_11.16.03_-_An_illustration_of_two_or_three_young_people_happily_moving_into_a_shared_living_space._The_scene_shows_cozy_well-decorated_rooms_with_suitcases_pla_ko5gzg.webp"
+              alt="Roommate request"
+            />
+            <SectionText>Discover compatible roommates for shared living.</SectionText>
+            <SectionButton to="/request/roommate">Create Request</SectionButton>
+          </SectionContent>
+        </Section>
+
+        <Section initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+          <SectionTitle>Create Ride Request</SectionTitle>
+          <SectionContent>
+            <SectionImage
+              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735993846/DALL_E_2025-01-04_18.01.01_-_A_modern_mobile_app_interface_for_creating_a_ride_request._The_screen_displays_input_fields_for_pickup_and_drop-off_locations_a_date_and_time_picker_q4qwtn.webp"
+              alt="Ride request"
+            />
+            <SectionText>Post your ride needs and find matching drivers.</SectionText>
+            <SectionButton to="/request/ride">Create Request</SectionButton>
+          </SectionContent>
+        </Section>
+      </SectionContainer>
+
+      {/* Finding Sections */}
+      <SectionContainer>
+        <Section initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <SectionTitle>Find Learners</SectionTitle>
+          <SectionContent>
+            <SectionImage
+              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735829444/DALL_E_2025-01-02_20.20.51_-_A_visually_stunning_landing_page_design_image_for_a_modern_educational_platform_named_PeerPal._The_scene_features_a_group_of_diverse_students_collab_qwhn92.webp"
+              alt="Find learners"
+            />
+            <SectionText>Join study groups and share knowledge with peers.</SectionText>
+            <SectionButton to="/learners">Find Learners</SectionButton>
+          </SectionContent>
+        </Section>
+
+        <Section initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+          <SectionTitle>Find Roommates</SectionTitle>
+          <SectionContent>
+            <SectionImage
+              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735996861/DALL_E_2025-01-04_18.49.57_-_A_vibrant_illustration_of_two_young_people_happily_moving_into_a_shared_living_space._The_scene_shows_cozy_well-decorated_rooms_with_furniture_plant_jikosr.webp"
+              alt="Find roommates"
+            />
+            <SectionText>Discover like-minded roommates for a shared home.</SectionText>
+            <SectionButton to="/roommates">Find Roommates</SectionButton>
+          </SectionContent>
+        </Section>
+
+        <Section initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+          <SectionTitle>Find Rides</SectionTitle>
+          <SectionContent>
+            <SectionImage
+              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735992496/DALL_E_2025-01-04_17.34.00_-_A_vibrant_illustration_of_a_ride-sharing_concept._Two_cheerful_passengers_one_male_and_one_female_sitting_in_a_modern_eco-friendly_car_smiling_and_tjcoqc.webp"
+              alt="Find rides"
+            />
+            <SectionText>Connect with peers for carpooling and ride-sharing.</SectionText>
+            <SectionButton to="/rides">Find Rides</SectionButton>
+          </SectionContent>
+        </Section>
+      </SectionContainer>
+      <SectionContainer>
+      <Section
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <SectionTitle>Set Project Goals</SectionTitle>
+          <SectionContent>
+            <SectionImage
+              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735992496/DALL_E_2025-01-04_17.34.02_-_A_dynamic_and_inspiring_illustration_representing_the_concept_of_setting_and_achieving_project_goals._The_image_shows_a_team_collaborating_with_chart_ojvlfo.webp"
+              alt="Goals icon"
+            />
+            <SectionText>
+              Create and track goals for your academic projects and personal
+              growth.
+            </SectionText>
+            <SectionButton to="/goals">Set Goals</SectionButton>
+          </SectionContent>
+        </Section>
         <Section
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <SectionTitle>Find Learning Partners</SectionTitle>
+          <SectionTitle>Instant Messaging</SectionTitle>
           <SectionContent>
             <SectionImage
-              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735882967/DALL_E_2025-01-03_11.12.56_-_An_illustration_of_students_connecting_and_collaborating_sitting_around_a_digital_globe_symbolizing_global_academic_networking._They_are_shown_using_ptkpjj.webp"
-              style={{ height: '250px', width: '300px' }}
-              alt="Students studying together"
+              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735996861/DALL_E_2025-01-04_18.51.09_-_An_image_showing_a_modern_sleek_chat_interface_for_a_peer-to-peer_messaging_system._The_interface_displays_multiple_chat_windows_with_messages_betwee_lndegj.webp"
+              alt="Chat icon"
             />
             <SectionText>
-              Connect with peers who share your academic interests and goals. Create or join study groups, collaborate on projects, and excel together.
+              Communicate easily with your connections through our built-in chat
+              system.
             </SectionText>
-            <SectionButton to="/request/learner">Create Learning Request</SectionButton>
+            <SectionButton to="/chat">Start Chatting</SectionButton>
           </SectionContent>
         </Section>
-
         <Section
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
         >
-          <SectionTitle>Find Your Ideal Roommate</SectionTitle>
+          <SectionTitle>Manage Your Profile</SectionTitle>
           <SectionContent>
             <SectionImage
-              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735883150/DALL_E_2025-01-03_11.16.03_-_An_illustration_of_two_or_three_young_people_happily_moving_into_a_shared_living_space._The_scene_shows_cozy_well-decorated_rooms_with_suitcases_pla_ko5gzg.webp"
-              style={{ height: '250px', width: '300px' }}
-              alt="Happy roommates"
+              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735882870/DALL_E_2025-01-03_11.07.18_-_A_visually_appealing_and_modern_icon_for_a_user_profile_featuring_a_simplistic_and_clean_design._The_icon_includes_a_circular_outline_containing_a_hu_shtq1x.webp"
+              alt="User icon"
             />
             <SectionText>
-              Discover compatible roommates who match your lifestyle and preferences. Make your living situation comfortable and enjoyable.
+            Create comprehensive profiles to find the best matches for your needs
             </SectionText>
-            <SectionButton to="/request/roommate">Create Roommate Request</SectionButton>
+            <SectionButton to="/profile">Edit Your Profile</SectionButton>
           </SectionContent>
         </Section>
       </SectionContainer>
-
-      <FeaturesContainer>
-        <FeatureCard
-          whileHover={{ y: -10 }}
-          transition={{ type: 'spring', stiffness: 300 }}
-        >
-          <FeatureIcon
-            src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735829231/Screenshot_2025-01-02_201548_pedyb9.png"
-            style={{ height: '250px', width: '240px' }}
-            alt="Chat icon"
-          />
-          <FeatureTitle>Instant Messaging</FeatureTitle>
-          <FeatureText>Communicate easily with your connections through our built-in chat system.</FeatureText>
-        </FeatureCard>
-
-        <FeatureCard
-          whileHover={{ y: -10 }}
-          transition={{ type: 'spring', stiffness: 300 }}
-        >
-          <FeatureIcon
-            src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735882870/DALL_E_2025-01-03_11.07.18_-_A_visually_appealing_and_modern_icon_for_a_user_profile_featuring_a_simplistic_and_clean_design._The_icon_includes_a_circular_outline_containing_a_hu_shtq1x.webp"
-            style={{ height: '250px', width: '240px' }}
-            alt="Profile icon"
-          />
-          <FeatureTitle>Detailed Profiles</FeatureTitle>
-          <FeatureText>Create comprehensive profiles to find the best matches for your needs.</FeatureText>
-        </FeatureCard>
-
-        <FeatureCard
-          whileHover={{ y: -10 }}
-          transition={{ type: 'spring', stiffness: 300 }}
-        >
-          <FeatureIcon
-            src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735882873/DALL_E_2025-01-03_11.07.13_-_An_elegant_and_modern_icon_representing_advanced_search_functionality._The_design_should_include_a_magnifying_glass_with_intricate_patterns_overlayin_i38rf4.webp"
-            style={{ height: '250px', width: '240px' }}
-            alt="Search icon"
-          />
-          <FeatureTitle>Advanced Search</FeatureTitle>
-          <FeatureText>Find exactly what you're looking for with our powerful search filters.</FeatureText>
-        </FeatureCard>
-
-        <FeatureCard
-          whileHover={{ y: -10 }}
-          transition={{ type: 'spring', stiffness: 300 }}
-        >
-          <FeatureIcon
-            src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735882871/DALL_E_2025-01-03_11.10.47_-_A_modern_minimalist_illustration_of_a_secure_digital_vault_with_a_shield_icon_and_a_padlock_symbolizing_safety_and_security._The_background_should_h_xxdins.webp"
-            style={{ height: '250px', width: '240px' }}
-            alt="Security icon"
-          />
-          <FeatureTitle>Safe and Secure</FeatureTitle>
-          <FeatureText>Your privacy and security are our top priorities. Connect with confidence.</FeatureText>
-        </FeatureCard>
-      </FeaturesContainer>
     </HomeContainer>
   );
 };

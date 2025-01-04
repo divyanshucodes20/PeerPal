@@ -153,6 +153,7 @@ const LandingPage: React.FC = () => {
           >
             <FeatureIcon
               src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735829231/Screenshot_2025-01-02_201439_yjkfw5.png"
+              style={{ height: '250px', width: '240px' }}
               alt="Learning icon"
             />
             <FeatureTitle>Find Learning Partners</FeatureTitle>
@@ -166,6 +167,7 @@ const LandingPage: React.FC = () => {
           >
             <FeatureIcon
               src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735829231/Screenshot_2025-01-02_201520_qscryd.png"
+              style={{ height: '250px', width: '240px' }}
               alt="Roommate icon"
             />
             <FeatureTitle>Find Roommates</FeatureTitle>
@@ -179,6 +181,7 @@ const LandingPage: React.FC = () => {
           >
             <FeatureIcon
               src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735829231/Screenshot_2025-01-02_201548_pedyb9.png"
+              style={{ height: '250px', width: '240px' }}
               alt="Chat icon"
             />
             <FeatureTitle>Chat with Peers</FeatureTitle>
@@ -186,6 +189,73 @@ const LandingPage: React.FC = () => {
               Communicate easily with your connections and groups
             </FeatureDescription>
           </FeatureCard>
+          <FeatureCard
+            whileHover={{ y: -10 }}
+            transition={{ type: 'spring', stiffness: 300 }}
+          >
+            <FeatureIcon
+              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735992496/DALL_E_2025-01-04_17.36.18_-_A_sleek_and_modern_icon_design_representing_Project_Goals_featuring_a_circular_target_symbol_with_a_glowing_light_bulb_at_the_center_symbolizing_f_fpn6al.webp"
+              style={{ height: '250px', width: '240px' }}
+              alt="Goals icon"
+            />
+            <FeatureTitle>Set Project Goals</FeatureTitle>
+            <FeatureDescription>
+              Create and track goals for your academic projects
+            </FeatureDescription>
+          </FeatureCard>
+          <FeatureCard
+            whileHover={{ y: -10 }}
+            transition={{ type: 'spring', stiffness: 300 }}
+          >
+            <FeatureIcon
+              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735992496/DALL_E_2025-01-04_17.34.00_-_A_vibrant_illustration_of_a_ride-sharing_concept._Two_cheerful_passengers_one_male_and_one_female_sitting_in_a_modern_eco-friendly_car_smiling_and_tjcoqc.webp"
+              style={{ height: '250px', width: '240px' }}
+              alt="Ride icon"
+            />
+            <FeatureTitle>Find Rides</FeatureTitle>
+            <FeatureDescription>
+              Connect with peers for carpooling and ride-sharing
+            </FeatureDescription>
+          </FeatureCard>
+          <FeatureCard
+            whileHover={{ y: -10 }}
+            transition={{ type: 'spring', stiffness: 300 }}
+          >
+            <FeatureIcon
+              src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735882870/DALL_E_2025-01-03_11.07.18_-_A_visually_appealing_and_modern_icon_for_a_user_profile_featuring_a_simplistic_and_clean_design._The_icon_includes_a_circular_outline_containing_a_hu_shtq1x.webp"
+              style={{ height: '250px', width: '240px' }}
+              alt="User Profile icon"
+            />
+            <FeatureTitle>Manage Your Profile</FeatureTitle>
+            <FeatureDescription>
+            Create comprehensive profiles to find the best matches for your needs
+            </FeatureDescription>
+          </FeatureCard>
+          <FeatureCard
+          whileHover={{ y: -10 }}
+          transition={{ type: 'spring', stiffness: 300 }}
+        >
+          <FeatureIcon
+            src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735882873/DALL_E_2025-01-03_11.07.13_-_An_elegant_and_modern_icon_representing_advanced_search_functionality._The_design_should_include_a_magnifying_glass_with_intricate_patterns_overlayin_i38rf4.webp"
+            style={{ height: '250px', width: '240px' }}
+            alt="Search icon"
+          />
+          <FeatureTitle>Advanced Search</FeatureTitle>
+          <FeatureDescription>Find exactly what you're looking for with our powerful search filters.</FeatureDescription>
+        </FeatureCard>
+
+        <FeatureCard
+          whileHover={{ y: -10 }}
+          transition={{ type: 'spring', stiffness: 300 }}
+        >
+          <FeatureIcon
+            src="https://res.cloudinary.com/dmwfyn2op/image/upload/v1735882871/DALL_E_2025-01-03_11.10.47_-_A_modern_minimalist_illustration_of_a_secure_digital_vault_with_a_shield_icon_and_a_padlock_symbolizing_safety_and_security._The_background_should_h_xxdins.webp"
+            style={{ height: '250px', width: '240px' }}
+            alt="Security icon"
+          />
+          <FeatureTitle>Safe and Secure</FeatureTitle>
+          <FeatureDescription>Your privacy and security are our top priorities. Connect with confidence.</FeatureDescription>
+        </FeatureCard>
         </FeatureGrid>
       </FeaturesSection>
     </LandingContainer>
@@ -193,3 +263,4 @@ const LandingPage: React.FC = () => {
 };
 
 export default LandingPage;
+
