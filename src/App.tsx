@@ -70,7 +70,7 @@ function App() {
     // Check user authentication status here
     // For now, we'll just set it to true after a delay to simulate a check
     setTimeout(() => {
-      setIsUserLoggedIn(true);
+      setIsUserLoggedIn(false);
       setIsLoading(false);
     }, 1000);
   }, []);
