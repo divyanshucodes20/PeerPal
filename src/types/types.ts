@@ -38,3 +38,22 @@ export type Learner={
     _id: string;
     isProject: boolean;
 }
+export type Project={
+    name: string;
+    creator: User;
+    type:["group"|"personal"];
+    members: User[];
+    teamSize: number;
+    groupChat: string;
+    learnerId:Learner;
+    _id: string;
+    goals:Goal[];
+}
+export type Goal={
+    project:Project;
+    title:string;
+    description:string;
+    assignedTo:User[];
+    _id:string;
+    completed:boolean;
+}

@@ -1,4 +1,4 @@
-import { Learner, Ride, Roommate } from "./types";
+import { Learner, Project, Ride, Roommate, User } from "./types";
 
 export type AllRidesResponse={
     rides: Ride[];
@@ -70,9 +70,70 @@ export type UpdateRoommateRequest = {
 export type DeleteRoommateRequest = {
   id: string;
 }
+export type AllProjectsResponse={
+  projects:Project[];
+  success: boolean;
+}
+export type ProjectResponse = {
+  success: boolean;
+  project: Project;
+};
+export type NewProjectRequest = {
+  formData: FormData;
+}
+export type UpdateProjectRequest = {
+  formData: FormData;
+  id: string;
+}
+export type DeleteProjectRequest = {
+  id: string;
+}
+export type AddMemberProjectRequest = {
+id: string;
+members:User[];
+}
+export type RemoveMemberProjectRequest = {
+id: string;
+member:User;
+};
+export type ProjectSuggestionsResponse = {
+  success: boolean;
+  suggestions: string[];
+}
+export type UserOtherThanMembersResponse = {
+  success: boolean;
+  users: User[];
+}
 export type AllLearnersResponse={
   learners:Learner[];
   success: boolean;
+}
+export type SearchLearnersResponse=AllLearnersResponse&{
+  totalPage: number;
+}
+export type SearchLearnerRequest = {
+isProject: boolean;
+  page: number;
+  search: string;
+  sort: string;
+};
+export type LearnerResponse = {
+  success: boolean;
+  learner: Learner;
+};
+export type NewLearnerRequest = {
+  formData: FormData;
+}
+export type UpdateLearnerRequest = {
+  formData: FormData;
+  id: string;
+}
+export type DeleteLearnerRequest = {
+  id: string;
+}
+export type LinkToExistingProjectRequest = {
+  projectId: string;
+  id: string;
 }
 
 
