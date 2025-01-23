@@ -26,4 +26,15 @@ export type Roommate={
     creator: User;
     rent: number;
     contactNumber: number;
+    _id: string;
+}
+export type Learner={
+    title: string;
+    description: string;
+    creator: User;
+    teamSize: number;
+    contactNumber: number;
+    members: User[];
+    _id: string;
+    isProject: boolean;
 }

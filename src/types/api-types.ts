@@ -1,4 +1,4 @@
-import { Ride, Roommate } from "./types";
+import { Learner, Ride, Roommate } from "./types";
 
 export type AllRidesResponse={
     rides: Ride[];
@@ -70,3 +70,9 @@ export type UpdateRoommateRequest = {
 export type DeleteRoommateRequest = {
   id: string;
 }
+export type AllLearnersResponse={
+  learners:Learner[];
+  success: boolean;
+}
+
+
