@@ -7,6 +7,7 @@ import { roommateAPI } from "./api/roommate";
 import { learnerAPI } from "./api/learner";
 import { rideAPI } from "./api/ride";
 import { projectAPI } from "./api/project";
+import { goalAPI } from "./api/goals";
 
 const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ const store = configureStore({
     [roommateAPI.reducerPath]: roommateAPI.reducer,
     [learnerAPI.reducerPath]: learnerAPI.reducer,
     [projectAPI.reducerPath]: projectAPI.reducer,
+    [goalAPI.reducerPath]: goalAPI.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
 });

@@ -1,4 +1,4 @@
-import { Learner, Project, Ride, Roommate, User } from "./types";
+import { Goal, Learner, Project, Ride, Roommate, User } from "./types";
 
 export type AllRidesResponse={
     rides: Ride[];
@@ -135,5 +135,32 @@ export type LinkToExistingProjectRequest = {
   projectId: string;
   id: string;
 }
+export type NewGoalRequest={
+  formData:FormData;
+}
+export type DeleteGoalRequest={
+  id:string;
+}
+export type UpdateGoalRequest={
+  formData:FormData;
+  id:string
+}
+export type GetProjectGoalsRequest={
+  id:string;
+}
+export type AllGoalsResponse={
+  goals:Goal[];
+  success:boolean;
+}
+export type GoalResponse={
+  goal:Goal;
+  success:boolean;
+}
+export type MarkGoalCompletedRequest={
+  id:string;
+  projectId:string;
+}
+
+
 
 
