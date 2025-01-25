@@ -1,8 +1,53 @@
-import type React from "react"
-import { useState } from "react"
+import React, { useState } from "react"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { userSignup } from "../redux/thunks/user"
+import styled from "styled-components"
+
+const FormWrapper = styled.div`
+  background-color: ${(props) => props.theme.background};
+  color: ${(props) => props.theme.text};
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+`
+
+const SignupCard = styled.div`
+  width: 100%;
+  max-width: 400px;
+  background: ${(props) => props.theme.cardBackground};
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 3rem;
+`
+
+const Input = styled.input`
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid ${(props) => props.theme.borderColor};
+  border-radius: 8px;
+  font-size: 1rem;
+  background: ${(props) => props.theme.inputBackground};
+  color: ${(props) => props.theme.text};
+`
+
+const Button = styled.button`
+  width: 100%;
+  padding: 1rem;
+  background-color: ${(props) => props.theme.primary};
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: ${(props) => props.theme.primaryHover};
+  }
+`
 
 const SignUp: React.FC = () => {
   const dispatch = useDispatch()
@@ -31,7 +76,7 @@ const SignUp: React.FC = () => {
     if (formData.avatar) {
       formDataToSend.append("avatar", formData.avatar)
     }
-     //@ts-ignore
+    //@ts-ignore
     const resultAction = await dispatch(userSignup(formDataToSend))
     if (userSignup.fulfilled.match(resultAction)) {
       navigate("/verify", { state: { email: formData.email } })
@@ -39,89 +84,61 @@ const SignUp: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign up for an account</h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <input type="hidden" name="remember" defaultValue="true" />
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="name" className="sr-only">
-                Name
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Name"
-                value={formData.name}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
+    <FormWrapper>
+      <SignupCard>
+        <h2 className="text-3xl font-bold text-center mb-6">Create an Account</h2>
+        <form onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="avatar" className="block text-sm font-medium text-gray-700">
-              Avatar
-            </label>
+            <label htmlFor="name" className="block mb-1">Name</label>
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              placeholder="Full Name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="email" className="block mb-1">Email address</label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Email address"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="block mb-1">Password</label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="avatar" className="block text-sm font-medium text-gray-700">Avatar</label>
             <input
               type="file"
               id="avatar"
               name="avatar"
               onChange={handleChange}
-              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-2 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
-
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Sign Up
-            </button>
-          </div>
+          <Button type="submit">Sign Up</Button>
         </form>
-      </div>
-    </div>
+      </SignupCard>
+    </FormWrapper>
   )
 }
 
 export default SignUp
-

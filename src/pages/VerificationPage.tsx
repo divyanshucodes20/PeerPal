@@ -1,8 +1,69 @@
-import type React from "react"
-import { useState } from "react"
+import React, { useState } from "react"
 import { useDispatch } from "react-redux"
 import { useNavigate, useLocation } from "react-router-dom"
 import { verifyOTP, resendOTP } from "../redux/thunks/user"
+import styled from "styled-components"
+
+// Styled components for the page
+const FormWrapper = styled.div`
+  background-color: ${(props) => props.theme.background};
+  color: ${(props) => props.theme.text};
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+`
+
+const VerificationCard = styled.div`
+  width: 100%;
+  max-width: 400px;
+  background: ${(props) => props.theme.cardBackground};
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 3rem;
+`
+
+const Input = styled.input`
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid ${(props) => props.theme.borderColor};
+  border-radius: 8px;
+  font-size: 1rem;
+  background: ${(props) => props.theme.inputBackground};
+  color: ${(props) => props.theme.text};
+`
+
+const Button = styled.button`
+  width: 100%;
+  padding: 1rem;
+  background-color: ${(props) => props.theme.primary};
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: ${(props) => props.theme.primaryHover};
+  }
+`
+
+const ResendButton = styled.button`
+  background: none;
+  border: none;
+  color: ${(props) => props.theme.primary};
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  margin-top: 1rem;
+
+  &:hover {
+    color: ${(props) => props.theme.primaryHover};
+  }
+`
 
 const VerificationPage: React.FC = () => {
   const dispatch = useDispatch()
@@ -29,51 +90,37 @@ const VerificationPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Verify your email</h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            We've sent a verification code to {location.state.email}
-          </p>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+    <FormWrapper>
+      <VerificationCard>
+        <h2 className="text-3xl font-extrabold text-center mb-6">Verify your email</h2>
+        <p className="text-center text-sm mb-6">
+          We've sent a verification code to {location.state.email}
+        </p>
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-6">
             <div>
               <label htmlFor="otp" className="sr-only">
                 Verification Code
               </label>
-              <input
+              <Input
                 id="otp"
                 name="otp"
                 type="text"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Enter verification code"
                 value={otp}
                 onChange={handleChange}
               />
             </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Verify
-            </button>
+            <Button type="submit">Verify</Button>
           </div>
         </form>
         <div className="text-center">
-          <button onClick={handleResendOTP} className="font-medium text-indigo-600 hover:text-indigo-500">
-            Resend verification code
-          </button>
+          <ResendButton onClick={handleResendOTP}>Resend verification code</ResendButton>
         </div>
-      </div>
-    </div>
+      </VerificationCard>
+    </FormWrapper>
   )
 }
 
 export default VerificationPage
-
