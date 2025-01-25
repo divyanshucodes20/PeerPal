@@ -1,204 +1,127 @@
-import React, { useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
-import { motion } from 'framer-motion';
-import styled from 'styled-components';
-import { ChromeIcon as Google, Upload } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import type React from "react"
+import { useState } from "react"
+import { useDispatch } from "react-redux"
+import { useNavigate } from "react-router-dom"
+import { userSignup } from "../redux/thunks/user"
 
-const SignupContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #2ecc71, #3498db);
-  padding: 2rem;
-`;
+const SignUp: React.FC = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    avatar: null as File | null,
+  })
 
-const SignupForm = styled(motion.form)`
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-`;
-
-const Title = styled.h2`
-  font-size: 2rem;
-  color: #2c3e50;
-  margin-bottom: 1.5rem;
-  text-align: center;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  border: 1px solid #bdc3c7;
-  border-radius: 4px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-
-  &:focus {
-    outline: none;
-    border-color: #3498db;
-  }
-`;
-
-const Button = styled(motion.button)`
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #2ecc71;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #27ae60;
-  }
-`;
-
-const GoogleButton = styled(Button)`
-  background-color: #dd4b39;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 1rem;
-
-  &:hover {
-    background-color: #c23321;
-  }
-`;
-
-const GoogleIcon = styled(Google)`
-  margin-right: 0.5rem;
-`;
-
-const ErrorMessage = styled.p`
-  color: #e74c3c;
-  margin-top: 0.5rem;
-  text-align: center;
-`;
-
-const SwitchOption = styled.p`
-  margin-top: 1rem;
-  text-align: center;
-  color: #2c3e50;
-`;
-
-const FileInput = styled.input`
-  display: none;
-`;
-
-const FileInputLabel = styled.label`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #4a5568;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-bottom: 1rem;
-`;
-
-const SignupPage: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  const { loginWithRedirect } = useAuth0();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.name === "avatar") {
+      setFormData({ ...formData, avatar: e.target.files ? e.target.files[0] : null })
+    } else {
+      setFormData({ ...formData, [e.target.name]: e.target.value })
     }
+  }
 
-    // Implement custom signup logic here
-    console.log('Signup with:', email, password, profilePicture);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setProfilePicture(e.target.files[0]);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const formDataToSend = new FormData()
+    formDataToSend.append("name", formData.name)
+    formDataToSend.append("email", formData.email)
+    formDataToSend.append("password", formData.password)
+    if (formData.avatar) {
+      formDataToSend.append("avatar", formData.avatar)
     }
-  };
+     //@ts-ignore
+    const resultAction = await dispatch(userSignup(formDataToSend))
+    if (userSignup.fulfilled.match(resultAction)) {
+      navigate("/verify", { state: { email: formData.email } })
+    }
+  }
 
   return (
-    <SignupContainer>
-      <SignupForm
-        onSubmit={handleSubmit}
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <Title>Join PeerPal</Title>
-        <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <Input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <Input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-        <FileInputLabel htmlFor="profile-picture">
-          <Upload size={20} style={{ marginRight: '0.5rem' }} />
-          {profilePicture ? 'Change Profile Picture' : 'Upload Profile Picture'}
-        </FileInputLabel>
-        <FileInput
-          type="file"
-          id="profile-picture"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-        <Button
-          type="submit"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          Sign Up
-        </Button>
-        <GoogleButton
-          type="button"
-          onClick={() => loginWithRedirect()}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <GoogleIcon size={24} />
-          Sign Up with Google
-        </GoogleButton>
-        <SwitchOption>
-          Already have an account? <Link to="/login">Login</Link>
-        </SwitchOption>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-      </SignupForm>
-    </SignupContainer>
-  );
-};
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign up for an account</h2>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <input type="hidden" name="remember" defaultValue="true" />
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="name" className="sr-only">
+                Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Name"
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label htmlFor="email-address" className="sr-only">
+                Email address
+              </label>
+              <input
+                id="email-address"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Email address"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
 
-export default SignupPage;
+          <div>
+            <label htmlFor="avatar" className="block text-sm font-medium text-gray-700">
+              Avatar
+            </label>
+            <input
+              type="file"
+              id="avatar"
+              name="avatar"
+              onChange={handleChange}
+              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Sign Up
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+export default SignUp
 

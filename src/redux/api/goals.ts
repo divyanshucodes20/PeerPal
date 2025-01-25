@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { GoalResponse,DeleteGoalRequest,NewGoalRequest,UpdateGoalRequest,AllGoalsResponse, MessageResponse,GetProjectGoalsRequest,MarkGoalCompletedRequest } from "../../types/api-types";
+import { server } from "../../constants/config";
 
 
 export const goalAPI = createApi({
   reducerPath: "goalApi",
   baseQuery: fetchBaseQuery({
-    //@ts-ignore
-    baseUrl: `${import.meta.env.VITE_SERVER}/api/v1/goal/`,
+    baseUrl: `${server}/api/v1/goal/`,
   }),
   tagTypes: ["goal"],
   endpoints: (builder) => ({

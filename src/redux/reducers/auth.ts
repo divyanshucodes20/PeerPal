@@ -1,11 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { adminLogin, adminLogout, getAdmin } from "../thunks/admin";
+import { userLogin, userSignup, userLogout, verifyOTP } from "../thunks/user"
 import toast from "react-hot-toast";
 
 const initialState = {
   user: null,
   isAdmin: false,
   loader: true,
+  isAuthenticated: false,
+  isVerified:false,
 };
 
 const authSlice = createSlice({
@@ -49,7 +52,38 @@ const authSlice = createSlice({
       .addCase(adminLogout.rejected, (state, action) => {
         state.isAdmin = true;
         toast.error(action.error.message);
-      });
+      })
+      .addCase(userSignup.fulfilled, (state, action) => {
+        state.user = action.payload.user
+        state.isAuthenticated = true
+        state.isVerified = false
+        toast.success("Signup successful! Please verify your email.")
+      })
+      .addCase(userSignup.rejected, (state, action) => {
+        toast.error(action.error.message)
+      })
+      .addCase(userLogin.fulfilled, (state, action) => {
+        state.user = action.payload.user
+        state.isAuthenticated = true
+        state.isVerified = action.payload.user.isVerified
+        toast.success("Login successful!")
+      })
+      .addCase(userLogin.rejected, (state, action) => {
+        toast.error(action.error.message)
+      })
+      .addCase(verifyOTP.fulfilled, (state, action) => {
+        state.isVerified = true
+        toast.success("Email verified successfully!")
+      })
+      .addCase(verifyOTP.rejected, (state, action) => {
+        toast.error(action.error.message)
+      })
+      .addCase(userLogout.fulfilled, (state) => {
+        state.user = null
+        state.isAuthenticated = false
+        state.isVerified = false
+        toast.success("Logged out successfully")
+      })
   },
 });
 

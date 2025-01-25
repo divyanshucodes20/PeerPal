@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { Menu, X, LogOut, User, Sun, Moon } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { userLogout } from '../redux/thunks/user';
 
 interface NavigationProps {
   isDarkMode: boolean;
@@ -185,6 +187,7 @@ const Navigation: React.FC<NavigationProps> = ({ isDarkMode, toggleTheme, isUser
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const dispatch=useDispatch();
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleUserDropdown = () => setIsUserDropdownOpen(!isUserDropdownOpen);
@@ -201,6 +204,10 @@ const Navigation: React.FC<NavigationProps> = ({ isDarkMode, toggleTheme, isUser
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+  const handleLogout = () => {
+    //@ts-ignore
+    dispatch(userLogout());
+  };
 
   return (
     <Nav isDarkMode={isDarkMode}>
@@ -285,7 +292,7 @@ const Navigation: React.FC<NavigationProps> = ({ isDarkMode, toggleTheme, isUser
               <DropdownItem to="/my-learning-requests" isDarkMode={isDarkMode}>My Learning Requests</DropdownItem>
               <DropdownItem to="/my-roommate-requests" isDarkMode={isDarkMode}>My Roommate Requests</DropdownItem>
               <DropdownItem to="/my-ride-requests" isDarkMode={isDarkMode}>My Ride Requests</DropdownItem>
-              <LogoutButton onClick={() => alert('Logged out!')} isDarkMode={isDarkMode}>
+              <LogoutButton onClick={handleLogout} isDarkMode={isDarkMode}>
                 <LogOut size={18} style={{ marginRight: '5px' }} />
                 Logout
               </LogoutButton>

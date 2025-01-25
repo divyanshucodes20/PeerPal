@@ -1,12 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { SearchRoommatesResponse, SearchRoommateRequest, RoommateResponse, AllRoommatesResponse, NewRoommateRequest, MessageResponse, UpdateRoommateRequest, DeleteRoommateRequest } from "../../types/api-types";
-
+import {server} from "../../constants/config"
 
 export const roommateAPI = createApi({
   reducerPath: "roommateApi",
   baseQuery: fetchBaseQuery({
-    //@ts-ignore
-    baseUrl: `${import.meta.env.VITE_SERVER}/api/v1/roommate/`,
+    baseUrl: `${server}/api/v1/roommate/`,
   }),
   tagTypes: ["roommate"],
   endpoints: (builder) => ({

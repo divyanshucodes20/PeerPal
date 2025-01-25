@@ -1,12 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { AllLearnersResponse, DeleteLearnerRequest, LearnerResponse, LinkToExistingProjectRequest, MessageResponse, NewLearnerRequest, SearchLearnerRequest, SearchLearnersResponse, UpdateLearnerRequest } from "../../types/api-types";
-
+import {server} from "../../constants/config"
 
 export const learnerAPI = createApi({
   reducerPath: "learnerApi",
   baseQuery: fetchBaseQuery({
-    //@ts-ignore
-    baseUrl: `${import.meta.env.VITE_SERVER}/api/v1/learner/`,
+    baseUrl: `${server}/api/v1/learner/`,
   }),
   tagTypes: ["learner"],
   endpoints: (builder) => ({

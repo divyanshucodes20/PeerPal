@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { AddMemberProjectRequest, AllProjectsResponse, DeleteProjectRequest, MessageResponse, NewProjectRequest, ProjectResponse, ProjectSuggestionsResponse, RemoveMemberProjectRequest, UpdateProjectRequest, UserOtherThanMembersResponse } from "../../types/api-types";
+import {server} from "../../constants/config"
 
 
 export const projectAPI = createApi({
   reducerPath: "projectApi",
   baseQuery: fetchBaseQuery({
-    //@ts-ignore
-    baseUrl: `${import.meta.env.VITE_SERVER}/api/v1/project/`,
+    baseUrl: `${server}/api/v1/project/`,
   }),
   tagTypes: ["project"],
   endpoints: (builder) => ({
