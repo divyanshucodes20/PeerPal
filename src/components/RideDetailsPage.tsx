@@ -137,7 +137,7 @@ const RideDetailsPage: React.FC = () => {
       </InfoItem>
       <InfoItem>
         <DollarSign size={20} style={{ marginRight: "0.5rem" }} />
-        Price per person: ${ride.ride.prizePerPerson}
+        Price per person: ₹{ride.ride.prizePerPerson}
       </InfoItem>
       {ride.ride.contactNumber && (
         <InfoItem>

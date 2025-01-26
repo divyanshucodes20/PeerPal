@@ -305,7 +305,7 @@ const RidesSection: React.FC = () => {
               </p>
               <p>
                 <DollarSign size={16} style={{ marginRight: "0.5rem", verticalAlign: "middle" }} />
-                Price per person: ${ride.prizePerPerson}
+                Price per person: ₹{ride.prizePerPerson}
               </p>
               <Description>{ride.description}</Description>
             </CardContent>
