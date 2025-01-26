@@ -273,11 +273,11 @@ const RidesSection: React.FC = () => {
           </Select>
           <Select value={priceRange} onChange={(e) => setPriceRange(e.target.value)}>
             <option value="">Any Price</option>
-            <option value="10">Up to $10</option>
-            <option value="20">Up to $20</option>
-            <option value="30">Up to $30</option>
-            <option value="40">Up to $40</option>
-            <option value="50">$50+</option>
+            <option value="100">Up to ₹100</option>
+            <option value="200">Up to ₹200</option>
+            <option value="300">Up to ₹300</option>
+            <option value="400">Up to ₹400</option>
+            <option value="10000">₹500+</option>
           </Select>
           <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
           <Button type="submit">Search</Button>
