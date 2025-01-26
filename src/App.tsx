@@ -32,6 +32,8 @@ const MyLearningRequests = lazy(() => import("./components/MyLearningRequests"))
 const MyRoommateRequests = lazy(() => import("./components/MyRoommateRequests"))
 const MyRideRequests = lazy(() => import("./components/MyRideRequests"))
 const VerificationPage = lazy(() => import("./pages/VerificationPage"))
+const RoommateDetailsPage=lazy(()=>import("./pages/RoommateDetails"))
+const RideDetailsPage=lazy(()=>import("./components/RideDetailsPage"))
 
 const lightTheme = {
   background: "#f7fafc",
@@ -101,7 +103,9 @@ const App: React.FC = () => {
                 <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} isVerified={isVerified} />}>
                   <Route path="/learners" element={<LearnersSection />} />
                   <Route path="/roommates" element={<RoommatesSection />} />
+                  <Route path="/roommates/:id" element={<RoommateDetailsPage />} />
                   <Route path="/rides" element={<RidesSection />} />
+                  <Route path="/rides/:id" element={<RideDetailsPage />} />
                   <Route path="/chat" element={<ChatSection />} />
                   <Route path="/chat/:id" element={<ChatSection />} />
                   <Route path="/profile" element={<MyProfile />} />

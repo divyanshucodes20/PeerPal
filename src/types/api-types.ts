@@ -160,6 +160,18 @@ export type MarkGoalCompletedRequest={
   id:string;
   projectId:string;
 }
+export type AllLocationsResponse={
+  locations:string[];
+  success:boolean;
+}
+export type AllSourcesResponse={
+  sources:string[];
+  success:boolean;
+}
+export type AllDestinationResponse={
+  destinations:string[];
+  success:boolean;
+}
 
 
 

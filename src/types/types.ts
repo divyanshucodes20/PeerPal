@@ -5,7 +5,11 @@ export type User={
     _id:string;
     otp:number;
     isVerified:boolean;
-    avatar:string;
+    avatar:Avatar;
+}
+export type Avatar={
+    url:string;
+    public_id:string;
 }
 
 export type Ride={
@@ -16,7 +20,7 @@ export type Ride={
     description:string;
     prizePerPerson:number;
     creator:User;
-    contactNumber:number;
+    contactNumber?:number;
     members:User[];
     _id:string;
 }
@@ -25,7 +29,7 @@ export type Roommate={
     description: string;
     creator: User;
     rent: number;
-    contactNumber: number;
+    contactNumber?: number;
     _id: string;
 }
 export type Learner={
@@ -33,7 +37,7 @@ export type Learner={
     description: string;
     creator: User;
     teamSize: number;
-    contactNumber: number;
+    contactNumber?: number;
     members: User[];
     _id: string;
     isProject: boolean;

@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { AllRidesResponse, DeleteRideRequest, MessageResponse, NewRideRequest, RideResponse, SearchRideRequest, SearchRidesResponse, UpdateRideRequest } from "../../types/api-types";
+import { AllDestinationResponse, AllRidesResponse, AllSourcesResponse, DeleteRideRequest, MessageResponse, NewRideRequest, RideResponse, SearchRideRequest, SearchRidesResponse, UpdateRideRequest } from "../../types/api-types";
 import { server } from "../../constants/config";
 
 
@@ -26,7 +26,14 @@ export const rideAPI = createApi({
       },
       providesTags: ["ride"],
     }),
-
+    getAllSources: builder.query<AllSourcesResponse, void>({
+      query: () => "source",
+      providesTags: ["ride"],
+    }),
+    getAllDestinations: builder.query<AllDestinationResponse, void>({
+      query: () => "destination",
+      providesTags: ["ride"],
+    }),
     rideDetails: builder.query<RideResponse, string>({
       query: (id) =>({
         url: `${id}`,
@@ -98,4 +105,7 @@ export const {
   useNewRideMutation,
   useUpdateRideMutation,
   useDeleteRideMutation,
+  useJoinRideMutation,
+  useLazyGetAllSourcesQuery,
+  useLazyGetAllDestinationsQuery
 } = rideAPI;

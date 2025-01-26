@@ -1,52 +1,66 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { Search, Plus, MapPin } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { DefaultTheme } from 'styled-components';
+import type React from "react"
+import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
+import { Search, Plus, MapPin, DollarSign } from "lucide-react"
+import {
+  useSearchRoommateRequestsQuery,
+  useJoinRoommateRequestMutation,
+  useGetAllLocationsQuery,
+} from "../redux/api/roommate"
+import toast from "react-hot-toast"
+import styled from "styled-components"
+import Loader from "./loader"
+import { Roommate } from "../types/types"
 
-const StyledSearch = styled(Search)`
-  color: ${props => props.theme.text};
-`;
-
-const SectionContainer = styled.div`
-  padding: 2rem;
+const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-`;
+  padding: 2rem;
+`
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-`;
+`
 
-const SearchContainer = styled.div<{ theme: DefaultTheme }>`
+const SearchForm = styled.form`
   display: flex;
   align-items: center;
-  background-color: ${props => props.theme.background};
-  border: 1px solid ${props => props.theme.primary};
+  background-color: ${(props) => props.theme.background};
+  border: 1px solid ${(props) => props.theme.primary};
   border-radius: 20px;
   padding: 0.5rem 1rem;
   flex-grow: 1;
-  max-width: 400px;
-`;
+  max-width: 600px;
+`
 
 const SearchInput = styled.input`
   border: none;
   background-color: transparent;
   margin-left: 0.5rem;
   flex-grow: 1;
-  color: ${props => props.theme.text};
+  color: ${(props) => props.theme.text};
   &:focus {
     outline: none;
   }
-`;
+`
 
-const CreateRequestButton = styled(Link)`
+const Select = styled.select`
+  border: none;
+  background-color: transparent;
+  margin-left: 0.5rem;
+  color: ${(props) => props.theme.text};
+  &:focus {
+    outline: none;
+  }
+`
+
+const CreateButton = styled(Link)`
   display: flex;
   align-items: center;
-  background-color: ${props => props.theme.primary};
+  background-color: ${(props) => props.theme.primary};
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -55,150 +69,205 @@ const CreateRequestButton = styled(Link)`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: ${props => props.theme.primary}dd;
+    background-color: ${(props) => props.theme.primary}dd;
   }
-`;
+`
 
-const CardsContainer = styled.div`
+const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1rem;
-`;
+`
 
 const Card = styled.div`
-  background-color: ${props => props.theme.background};
-  border: 1px solid ${props => props.theme.primary}33;
+  background-color: ${(props) => props.theme.background};
+  border: 1px solid ${(props) => props.theme.primary}33;
   border-radius: 8px;
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  transition: box-shadow 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-`;
+`
 
 const Avatar = styled.img`
   width: 60px;
   height: 60px;
   border-radius: 50%;
   margin-bottom: 1rem;
-`;
+`
 
-const Location = styled.h3`
+const CardTitle = styled.h3`
   margin: 0 0 0.5rem 0;
-  color: ${props => props.theme.primary};
+  color: ${(props) => props.theme.primary};
+`
+
+const CardContent = styled.div`
+  flex-grow: 1;
+`
+
+const Location = styled.p`
   display: flex;
   align-items: center;
-`;
+  color: ${(props) => props.theme.text};
+  margin-bottom: 0.5rem;
+`
 
 const Description = styled.p`
-  margin: 0 0 1rem 0;
-  color: ${props => props.theme.text};
-  flex-grow: 1;
-`;
-
-const EmptySpace = styled.div`
-  height: 1rem;
-`;
+  color: ${(props) => props.theme.text};
+  margin-bottom: 1rem;
+`
 
 const JoinButton = styled.button`
-  background-color: ${props => props.theme.primary};
+  background-color: ${(props) => props.theme.primary};
   color: white;
   border: none;
   border-radius: 4px;
   padding: 0.5rem 1rem;
+  margin-top: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: ${props => props.theme.primary}dd;
+    background-color: ${(props) => props.theme.primary}dd;
   }
-`;
 
-interface RoommateRequest {
-  id: number;
-  location: string;
-  description: string;
-  avatar: string;
-}
+  &:disabled {
+    background-color: ${(props) => props.theme.primary}66;
+    cursor: not-allowed;
+  }
+`
 
-const dummyData: RoommateRequest[] = [
-  {
-    id: 1,
-    location: "University Hostel A",
-    description: "Looking for a quiet and studious roommate for the upcoming semester.",
-    avatar: "https://i.pravatar.cc/60?img=1",
-  },
-  {
-    id: 2,
-    location: "Downtown Apartment",
-    description: "Seeking a roommate to share a 2-bedroom apartment in the city center.",
-    avatar: "https://i.pravatar.cc/60?img=2",
-  },
-  {
-    id: 3,
-    location: "Off-campus House",
-    description: "Group of 3 students looking for a 4th roommate in a shared house near campus.",
-    avatar: "https://i.pravatar.cc/60?img=3",
-  },
-  {
-    id: 4,
-    location: "Graduate Student Housing",
-    description: "PhD student seeking a roommate in the graduate student housing complex.",
-    avatar: "https://i.pravatar.cc/60?img=4",
-  },
-];
+const Pagination = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+`
+
+const PaginationButton = styled.button`
+  background-color: ${(props) => props.theme.primary};
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${(props) => props.theme.primary}dd;
+  }
+
+  &:disabled {
+    background-color: ${(props) => props.theme.primary}66;
+    cursor: not-allowed;
+  }
+`
 
 const RoommatesSection: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [requests, setRequests] = useState<RoommateRequest[]>(dummyData);
+  const [searchTerm, setSearchTerm] = useState("")
+  const [selectedLocation, setSelectedLocation] = useState("")
+  const [rentRange, setRentRange] = useState("")
+  const [page, setPage] = useState(1)
+  const { data, error, isLoading } = useSearchRoommateRequestsQuery({
+    search: searchTerm,
+    page,
+    location: selectedLocation,
+    rent: rentRange ? Number.parseInt(rentRange) : 0,
+    sort: "",
+  })
+  const [joinRoommateRequest, { isLoading: isJoining }] = useJoinRoommateRequestMutation()
+  const { data: locations } = useGetAllLocationsQuery()
 
-  const filteredRequests = requests.filter(request =>
-    request.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    request.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    setPage(1)
+  }
 
-  const handleJoin = (id: number) => {
-    console.log(`Joined request with id: ${id}`);
-  };
+  const handleJoinRoommateRequest = async (id: string) => {
+    try {
+      const response = await joinRoommateRequest(id).unwrap()
+      toast.success(response.message)
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to join the request")
+    }
+  }
+
+  useEffect(() => {
+    if (error) {
+      toast.error("Failed to fetch roommate requests")
+    }
+  }, [error])
+
+  if (isLoading) return <Loader />
+  if (error) return <div>Error: {error.toString()}</div>
 
   return (
-    <SectionContainer>
+    <Container>
       <Header>
-        <SearchContainer>
-          <StyledSearch size={20} />
+        <SearchForm onSubmit={handleSearch}>
+          <Search size={20} />
           <SearchInput
             type="text"
             placeholder="Search roommate requests..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-        </SearchContainer>
-        <CreateRequestButton to="/request/roommate">
-          <Plus size={20} style={{ marginRight: '0.5rem' }} />
+          <Select value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)}>
+            <option value="">All Locations</option>
+            {locations?.locations.map((location:string) => (
+              <option key={location} value={location}>
+                {location}
+              </option>
+            ))}
+          </Select>
+          <Select value={rentRange} onChange={(e) => setRentRange(e.target.value)}>
+            <option value="">Any Rent</option>
+            <option value="500">Up to $500</option>
+            <option value="1000">Up to $1000</option>
+            <option value="1500">Up to $1500</option>
+            <option value="2000">Up to $2000</option>
+            <option value="2500">$2000+</option>
+          </Select>
+        </SearchForm>
+        <CreateButton to="/request/roommate">
+          <Plus size={20} style={{ marginRight: "0.5rem" }} />
           Create Request
-        </CreateRequestButton>
+        </CreateButton>
       </Header>
-      <CardsContainer>
-        {filteredRequests.map(request => (
-          <Card key={request.id}>
-            <Avatar src={request.avatar} alt="Avatar" />
+      <Grid>
+        {data?.roommates.map((request:Roommate) => (
+          <Card key={request._id}>
+            <Avatar src={request.creator.avatar.url} alt={request.creator.name} />
             <Location>
-              <MapPin size={16} style={{ marginRight: '0.5rem' }} />
+              <MapPin size={16} style={{ marginRight: "0.5rem" }} />
               {request.location}
             </Location>
             <Description>{request.description}</Description>
-            <EmptySpace />
-            <JoinButton onClick={() => handleJoin(request.id)}>Join</JoinButton>
+            <p>
+              <DollarSign size={16} style={{ marginRight: "0.5rem", verticalAlign: "middle" }} />
+              Rent: ${request.rent}/month
+            </p>
+            <JoinButton onClick={() => handleJoinRoommateRequest(request._id)} disabled={isJoining}>
+              {isJoining ? "Joining..." : "Join"}
+            </JoinButton>
           </Card>
         ))}
-      </CardsContainer>
-    </SectionContainer>
-  );
-};
+      </Grid>
+      {data?.totalPage! > 1 && (
+        <Pagination>
+          <PaginationButton onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1}>
+            Previous
+          </PaginationButton>
+          <PaginationButton
+            onClick={() => setPage((prev) => Math.min(prev + 1, data?.totalPage!))}
+            disabled={page === data?.totalPage!}
+          >
+            Next
+          </PaginationButton>
+        </Pagination>
+      )}
+    </Container>
+  )
+}
 
-export default RoommatesSection;
+export default RoommatesSection
 

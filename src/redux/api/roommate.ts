@@ -1,9 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { SearchRoommatesResponse, SearchRoommateRequest, RoommateResponse, AllRoommatesResponse, NewRoommateRequest, MessageResponse, UpdateRoommateRequest, DeleteRoommateRequest } from "../../types/api-types";
+import { SearchRoommatesResponse, SearchRoommateRequest, RoommateResponse, AllRoommatesResponse, NewRoommateRequest, MessageResponse, UpdateRoommateRequest, DeleteRoommateRequest, AllLocationsResponse } from "../../types/api-types";
 import {server} from "../../constants/config"
 
 export const roommateAPI = createApi({
-  reducerPath: "roommateApi",
+  reducerPath: "roommateAPI",
   baseQuery: fetchBaseQuery({
     baseUrl: `${server}/api/v1/roommate/`,
   }),
@@ -23,7 +23,10 @@ export const roommateAPI = createApi({
       },
       providesTags: ["roommate"],
     }),
-
+    getAllLocations:builder.query<AllLocationsResponse,void>({
+      query: () => `locations`,
+      providesTags: ["roommate"],
+    }),
     roommateDetails: builder.query<RoommateResponse, string>({
       query: (id) =>({
         url: `${id}`,
@@ -50,7 +53,7 @@ export const roommateAPI = createApi({
       invalidatesTags: ["roommate"],
     }),
 
-    updateRide: builder.mutation<MessageResponse, UpdateRoommateRequest>({
+    updateRoommate: builder.mutation<MessageResponse, UpdateRoommateRequest>({
       query: ({ formData,id}) => ({
         url: `${id}`,
         method: "PUT",
@@ -84,7 +87,8 @@ export const {
   useRoommateDetailsQuery,
   useAllRoommateRequestsOfUserQuery,
   useNewRoommateRequestMutation,
-  useUpdateRideMutation,
+  useUpdateRoommateMutation,
   useDeleteRoommateRequestMutation,
-  useJoinRoommateRequestMutation
+  useJoinRoommateRequestMutation,
+  useGetAllLocationsQuery
 } = roommateAPI;
