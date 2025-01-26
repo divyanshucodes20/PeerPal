@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { AllLearnersResponse, DeleteLearnerRequest, LearnerResponse, LinkToExistingProjectRequest, MessageResponse, NewLearnerRequest, SearchLearnerRequest, SearchLearnersResponse, UpdateLearnerRequest } from "../../types/api-types";
+import { AllLearnersResponse, DeleteLearnerRequest, LearnerResponse, LinkToExistingProjectRequest, MessageResponse, NewLearnerRequest, NewLearnerRequestResponse, SearchLearnerRequest, SearchLearnersResponse, UpdateLearnerRequest } from "../../types/api-types";
 import {server} from "../../constants/config"
 
 export const learnerAPI = createApi({
@@ -46,7 +46,7 @@ export const learnerAPI = createApi({
       providesTags: ["learner"],
     }),
 
-    newLearnerRequest: builder.mutation<MessageResponse, NewLearnerRequest>({
+    newLearnerRequest: builder.mutation<NewLearnerRequestResponse, NewLearnerRequest>({
       query: ({ formData}) => ({
         url: `new`,
         method: "POST",
@@ -86,7 +86,7 @@ export const learnerAPI = createApi({
         query: ({ id, projectId }) => ({
             url: `link/${id}`,
             method: "PUT",
-            body:projectId,
+            body:{projectId},
             credentials: "include",
         }),
         invalidatesTags: ["learner"],

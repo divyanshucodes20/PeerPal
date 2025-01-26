@@ -1,51 +1,60 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { Search, Plus, Users } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { DefaultTheme } from 'styled-components';
+import React, { useState } from "react"
+import { Link } from "react-router-dom"
+import { Search, Plus, Users } from "lucide-react"
+import { useSearchLearnerRequestsQuery, useJoinLearnerRequestMutation } from "../redux/api/learner"
+import toast from "react-hot-toast"
+import styled from "styled-components"
+import Loader from "./loader"
 
-const StyledSearch = styled(Search)`
-  color: ${props => props.theme.text};
-`;
-const SectionContainer = styled.div`
-  padding: 2rem;
+const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-`;
+  padding: 2rem;
+`
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-`;
+`
 
-const SearchContainer = styled.div<{ theme: DefaultTheme }>`
+const SearchForm = styled.form`
   display: flex;
   align-items: center;
-  background-color: ${props => props.theme.background};
-  border: 1px solid ${props => props.theme.primary};
+  background-color: ${(props) => props.theme.background};
+  border: 1px solid ${(props) => props.theme.primary};
   border-radius: 20px;
   padding: 0.5rem 1rem;
   flex-grow: 1;
-  max-width: 400px;
-`;
+  max-width: 600px;
+`
 
 const SearchInput = styled.input`
   border: none;
   background-color: transparent;
   margin-left: 0.5rem;
   flex-grow: 1;
-  color: ${props => props.theme.text};
+  color: ${(props) => props.theme.text};
   &:focus {
     outline: none;
   }
-`;
+`
 
-const CreateRequestButton = styled(Link)`
+const Select = styled.select`
+  border: none;
+  background-color: transparent;
+  margin-left: 0.5rem;
+  color: ${(props) => props.theme.text};
+  &:focus {
+    outline: none;
+  }
+`
+
+const CreateButton = styled(Link)`
   display: flex;
   align-items: center;
-  background-color: ${props => props.theme.primary};
+  background-color: ${(props) => props.theme.primary};
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -54,159 +63,208 @@ const CreateRequestButton = styled(Link)`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: ${props => props.theme.primary}dd;
+    background-color: ${(props) => props.theme.primary}dd;
   }
-`;
+`
 
-const CardsContainer = styled.div`
+const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1rem;
-`;
+`
 
 const Card = styled.div`
-  background-color: ${props => props.theme.background};
-  border: 1px solid ${props => props.theme.primary}33;
+  background-color: ${(props) => props.theme.background};
+  border: 1px solid ${(props) => props.theme.primary}33;
   border-radius: 8px;
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  transition: box-shadow 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-`;
+`
 
 const Avatar = styled.img`
   width: 60px;
   height: 60px;
   border-radius: 50%;
   margin-bottom: 1rem;
-`;
+`
 
-const ProjectName = styled.h3`
+const CardTitle = styled.h3`
   margin: 0 0 0.5rem 0;
-  color: ${props => props.theme.primary};
-`;
+  color: ${(props) => props.theme.primary};
+`
+
+const CardContent = styled.div`
+  flex-grow: 1;
+`
 
 const Description = styled.p`
-  margin: 0 0 1rem 0;
-  color: ${props => props.theme.text};
-  flex-grow: 1;
-`;
-
-const TeamSize = styled.div`
-  display: flex;
-  align-items: center;
-  color: ${props => props.theme.text};
-  font-size: 0.9rem;
-`;
+  color: ${(props) => props.theme.text};
+  margin-bottom: 1rem;
+`
 
 const JoinButton = styled.button`
-  background-color: ${props => props.theme.primary};
+  background-color: ${(props) => props.theme.primary};
   color: white;
   border: none;
   border-radius: 4px;
   padding: 0.5rem 1rem;
+  margin-top: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: ${props => props.theme.primary}dd;
+    background-color: ${(props) => props.theme.primary}dd;
   }
-`;
 
-interface LearnerRequest {
-  id: number;
-  projectName: string;
-  description: string;
-  teamSize: {
-    current: number;
-    max: number;
-  };
-  avatar: string;
-}
+  &:disabled {
+    background-color: ${(props) => props.theme.primary}66;
+    cursor: not-allowed;
+  }
+`
 
-const dummyData: LearnerRequest[] = [
-  {
-    id: 1,
-    projectName: "Machine Learning Study Group",
-    description: "Looking for peers to study machine learning concepts and work on projects together.",
-    teamSize: { current: 2, max: 5 },
-    avatar: "https://i.pravatar.cc/60?img=1",
-  },
-  {
-    id: 2,
-    projectName: "Web Development Workshop",
-    description: "Seeking participants for a collaborative web development workshop focusing on React and Node.js.",
-    teamSize: { current: 3, max: 6 },
-    avatar: "https://i.pravatar.cc/60?img=2",
-  },
-  {
-    id: 3,
-    projectName: "Data Science Project",
-    description: "Need team members for a data science project analyzing social media trends.",
-    teamSize: { current: 1, max: 4 },
-    avatar: "https://i.pravatar.cc/60?img=3",
-  },
-  {
-    id: 4,
-    projectName: "Mobile App Development",
-    description: "Looking for iOS and Android developers to create a cross-platform fitness app.",
-    teamSize: { current: 2, max: 5 },
-    avatar: "https://i.pravatar.cc/60?img=4",
-  },
-];
+const ViewDetailsButton = styled(Link)`
+  background-color: ${(props) => props.theme.primary};
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${(props) => props.theme.secondary}dd;
+  }
+`
+
+const Pagination = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+`
+
+const PaginationButton = styled.button`
+  background-color: ${(props) => props.theme.primary};
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${(props) => props.theme.primary}dd;
+  }
+
+  &:disabled {
+    background-color: ${(props) => props.theme.primary}66;
+    cursor: not-allowed;
+  }
+`
 
 const LearnersSection: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [requests, setRequests] = useState<LearnerRequest[]>(dummyData);
+  const [searchTerm, setSearchTerm] = useState("")
+  const [isProject, setIsProject] = useState<boolean | undefined>(undefined)
+  const [page, setPage] = useState(1)
+  const { data, error, isLoading } = useSearchLearnerRequestsQuery({
+    search: searchTerm,
+    page,
+    isProject: isProject ?? false,
+    sort: "",
+  })
+  const [joinLearnerRequest, { isLoading: isJoining }] = useJoinLearnerRequestMutation()
 
-  const filteredRequests = requests.filter(request =>
-    request.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    request.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    setPage(1)
+  }
 
-  const handleJoin = (id: number) => {
-    console.log(`Joined request with id: ${id}`);
-  };
+  const handleJoinLearnerRequest = async (id: string) => {
+    try {
+      const response = await joinLearnerRequest(id).unwrap()
+      toast.success(response.message || "Successfully joined the learner request!")
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to join the learner request")
+    }
+  }
+
+  React.useEffect(() => {
+    if (error) {
+      toast.error("Failed to fetch learner requests")
+    }
+  }, [error])
+
+  if (isLoading) return <Loader />
+  if (error) return <div>Error: {error.toString()}</div>
 
   return (
-    <SectionContainer>
+    <Container>
       <Header>
-        <SearchContainer>
-          <StyledSearch size={20} />
+        <SearchForm onSubmit={handleSearch}>
+          <Search size={20} />
           <SearchInput
             type="text"
             placeholder="Search learner requests..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-        </SearchContainer>
-        <CreateRequestButton to="/request/learner">
-          <Plus size={20} style={{ marginRight: '0.5rem' }} />
+          <Select
+            value={isProject === undefined ? "" : isProject.toString()}
+            onChange={(e) => setIsProject(e.target.value === "" ? undefined : e.target.value === "true")}
+          >
+            <option value="">All Requests</option>
+            <option value="true">Projects Only</option>
+            <option value="false">Non-Projects Only</option>
+          </Select>
+          <button type="submit">Search</button>
+        </SearchForm>
+        <CreateButton to="/request/learner">
+          <Plus size={20} style={{ marginRight: "0.5rem" }} />
           Create Request
-        </CreateRequestButton>
+        </CreateButton>
       </Header>
-      <CardsContainer>
-        {filteredRequests.map(request => (
-          <Card key={request.id}>
-            <Avatar src={request.avatar} alt="Avatar" />
-            <ProjectName>{request.projectName}</ProjectName>
-            <Description>{request.description}</Description>
-            <TeamSize>
-              <Users size={16} style={{ marginRight: '0.5rem' }} />
-              {request.teamSize.current}/{request.teamSize.max} members
-            </TeamSize>
-            <JoinButton onClick={() => handleJoin(request.id)}>Join</JoinButton>
+      <Grid>
+        {data?.learners.map((learner) => (
+          <Card key={learner._id}>
+            <Avatar src={learner.creator.avatar.url} alt={learner.creator.name} />
+            <CardTitle>{learner.title}</CardTitle>
+            <CardContent>
+              <Description>{learner.description}</Description>
+              <p>
+                <Users size={16} style={{ marginRight: "0.5rem", verticalAlign: "middle" }} />
+                Team Size: {learner.members.length + 1}/{learner.teamSize+1}
+              </p>
+              {learner.isProject && <p>Project Request</p>}
+            </CardContent>
+            <JoinButton
+              onClick={() => handleJoinLearnerRequest(learner._id)}
+              disabled={isJoining || learner.members.length + 1 >= learner.teamSize+1}
+            >
+              {isJoining ? "Joining..." : learner.members.length + 1 >= learner.teamSize+1 ? "Full" : "Join"}
+            </JoinButton>
+            <ViewDetailsButton to={`/learners/${learner._id}`}>View Details</ViewDetailsButton>
           </Card>
         ))}
-      </CardsContainer>
-    </SectionContainer>
-  );
-};
+      </Grid>
+      {data?.totalPage! > 1 && (
+        <Pagination>
+          <PaginationButton onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1}>
+            Previous
+          </PaginationButton>
+          <PaginationButton
+            onClick={() => setPage((prev) => Math.min(prev + 1, data?.totalPage!))}
+            disabled={page === data?.totalPage}
+          >
+            Next
+          </PaginationButton>
+        </Pagination>
+      )}
+    </Container>
+  )
+}
 
-export default LearnersSection;
+export default LearnersSection
 

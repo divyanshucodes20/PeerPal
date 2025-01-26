@@ -34,6 +34,8 @@ const MyRideRequests = lazy(() => import("./components/MyRideRequests"))
 const VerificationPage = lazy(() => import("./pages/VerificationPage"))
 const RoommateDetailsPage=lazy(()=>import("./pages/RoommateDetails"))
 const RideDetailsPage=lazy(()=>import("./components/RideDetailsPage"))
+const LearnerDetailsPage=lazy(()=>import("./pages/LearnerDetails"))
+const LinkToExisitingProject=lazy(()=>import("./pages/LinkToExistingProject"))
 
 const lightTheme = {
   background: "#f7fafc",
@@ -102,6 +104,8 @@ const App: React.FC = () => {
                 {/* Protected Routes */}
                 <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} isVerified={isVerified} />}>
                   <Route path="/learners" element={<LearnersSection />} />
+                  <Route path="/learners/:id" element={<LearnerDetailsPage />} />
+                  <Route path="/learners/isProject/:id" element={<LinkToExisitingProject />} />
                   <Route path="/roommates" element={<RoommatesSection />} />
                   <Route path="/roommates/:id" element={<RoommateDetailsPage />} />
                   <Route path="/rides" element={<RidesSection />} />

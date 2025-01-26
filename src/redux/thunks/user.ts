@@ -2,6 +2,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit"
 import axios from "axios"
 import { server } from "../../constants/config"
 
+axios.defaults.withCredentials = true;
+
 export const userSignup = createAsyncThunk("user/signup", async (formData: FormData, { rejectWithValue }) => {
   try {
     const { data } = await axios.post(`${server}/api/v1/user/new`, formData, {

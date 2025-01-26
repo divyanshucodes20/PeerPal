@@ -172,6 +172,11 @@ export type AllDestinationResponse={
   destinations:string[];
   success:boolean;
 }
+export type NewLearnerRequestResponse={
+  success:boolean;
+  learner:Learner;
+  message:string;
+}
 
 
 
