@@ -178,6 +178,15 @@ export type NewLearnerRequestResponse={
   learner:Learner;
   message:string;
 }
+type  Friends={
+_id:string;
+name:string;
+avatar:string;
+}
+export type OtherMembersResponse={
+  success:boolean;
+  friends:Friends[];
+}
 
 
 

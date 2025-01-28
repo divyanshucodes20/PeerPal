@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { AllDestinationResponse, AllRidesResponse, AllSourcesResponse, DeleteRideRequest, MessageResponse, NewRideRequest, RemoveMemberProjectRequest, RideResponse, SearchRideRequest, SearchRidesResponse, UpdateRideRequest } from "../../types/api-types";
+import { AllDestinationResponse, AllRidesResponse, AllSourcesResponse, DeleteRideRequest, MessageResponse, NewRideRequest, OtherMembersResponse, RemoveMemberProjectRequest, RideResponse, SearchRideRequest, SearchRidesResponse, UpdateRideRequest } from "../../types/api-types";
 import { server } from "../../constants/config";
 
 
@@ -103,6 +103,21 @@ export const rideAPI = createApi({
       }),
       invalidatesTags: ["ride"],
     }),
+    getFriendsOtherThanRideMembers: builder.query<OtherMembersResponse, string>({
+          query: (id) => ({
+            url: `other-members/${id}`,
+            credentials: "include",
+          }),
+          providesTags: ["ride"],
+        }),
+    leaveRide: builder.mutation<MessageResponse, string>({
+      query: (id) => ({
+        url: `leave/${id}`,
+        method: "PUT",
+        credentials: "include",
+      }),
+      invalidatesTags: ["ride"],
+    }),
   }),
 });
 
@@ -117,5 +132,6 @@ export const {
   useJoinRideMutation,
   useLazyGetAllSourcesQuery,
   useLazyGetAllDestinationsQuery,
-  useRemoveMemberFromRideMutation
+  useRemoveMemberFromRideMutation,
+  useGetFriendsOtherThanRideMembersQuery,
 } = rideAPI;

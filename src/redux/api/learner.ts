@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { AddMemberProjectRequest, AllLearnersResponse, DeleteLearnerRequest, LearnerResponse, LinkToExistingProjectRequest, MessageResponse, NewLearnerRequest, NewLearnerRequestResponse, RemoveMemberProjectRequest, SearchLearnerRequest, SearchLearnersResponse, UpdateLearnerRequest } from "../../types/api-types";
+import { AddMemberProjectRequest, AllLearnersResponse, DeleteLearnerRequest, LearnerResponse, LinkToExistingProjectRequest, MessageResponse, NewLearnerRequest, NewLearnerRequestResponse, OtherMembersResponse, RemoveMemberProjectRequest, SearchLearnerRequest, SearchLearnersResponse, UpdateLearnerRequest } from "../../types/api-types";
 import {server} from "../../constants/config"
 
 export const learnerAPI = createApi({
@@ -109,6 +109,21 @@ export const learnerAPI = createApi({
       }),
       invalidatesTags: ["learner"],
     }),
+    getFriendsOtherThanLearnerMembers: builder.query<OtherMembersResponse, string>({
+      query: (id) => ({
+        url: `other-members/${id}`,
+        credentials: "include",
+      }),
+      providesTags: ["learner"],
+    }),
+    leaveProject: builder.mutation<MessageResponse, string>({
+      query: (id) => ({
+        url: `leave/${id}`,
+        method: "PUT",
+        credentials: "include",
+      }),
+      invalidatesTags: ["learner"],
+    }),
   }),
 });
 
@@ -124,4 +139,5 @@ export const {
   useLinkToExistingProjectMutation,
   useAddMemberToLearnerRequestMutation,
   useRemoveMemberFromLearnerRequestMutation,
+  useLeaveProjectMutation,
 } = learnerAPI;

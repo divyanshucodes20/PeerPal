@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { AddMemberProjectRequest, AllProjectsResponse, DeleteProjectRequest, MessageResponse, NewProjectRequest, ProjectResponse, ProjectSuggestionsResponse, RemoveMemberProjectRequest, UpdateProjectRequest, UserOtherThanMembersResponse } from "../../types/api-types";
+import { AddMemberProjectRequest, AllProjectsResponse, DeleteProjectRequest, MessageResponse, NewProjectRequest, OtherMembersResponse, ProjectResponse, ProjectSuggestionsResponse, RemoveMemberProjectRequest, UpdateProjectRequest} from "../../types/api-types";
 import {server} from "../../constants/config"
 
 
@@ -88,13 +88,21 @@ export const projectAPI = createApi({
         }),
         invalidatesTags: ["project"],
     }),
-    getUserOtherThanMembers: builder.query<UserOtherThanMembersResponse, string>({
-        query: (id) => ({
+    getFriendsOtherThanProjectMembers: builder.query<OtherMembersResponse, string>({
+          query: (id) => ({
             url: `other-members/${id}`,
             credentials: "include",
+          }),
+          providesTags: ["project"],
         }),
-        providesTags: ["project"],
-    }),
+        leaveProject: builder.mutation<MessageResponse, string>({
+          query: (id) => ({
+            url: `leave/${id}`,
+            method: "PUT",
+            credentials: "include",
+          }),
+          invalidatesTags: ["project"],
+        }),
   }),
 });
 
@@ -106,7 +114,8 @@ export const {
   useGetProjectSuggestionsQuery,
   useAddMemberToProjectMutation,
   useRemoveMemberFromProjectMutation,
-  useGetUserOtherThanMembersQuery,
+  useGetFriendsOtherThanProjectMembersQuery,
   useAllProjectsOfUserQuery,
   useAllUserJoinedProjectsQuery,
+  useLeaveProjectMutation
 } = projectAPI;
