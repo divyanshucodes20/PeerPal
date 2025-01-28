@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { AllDestinationResponse, AllRidesResponse, AllSourcesResponse, DeleteRideRequest, MessageResponse, NewRideRequest, RideResponse, SearchRideRequest, SearchRidesResponse, UpdateRideRequest } from "../../types/api-types";
+import { AllDestinationResponse, AllRidesResponse, AllSourcesResponse, DeleteRideRequest, MessageResponse, NewRideRequest, RemoveMemberProjectRequest, RideResponse, SearchRideRequest, SearchRidesResponse, UpdateRideRequest } from "../../types/api-types";
 import { server } from "../../constants/config";
 
 
@@ -94,6 +94,15 @@ export const rideAPI = createApi({
       }),
       invalidatesTags: ["ride"],
     }),
+    removeMemberFromRide: builder.mutation<MessageResponse,RemoveMemberProjectRequest>({
+      query: ({id,member}) => ({
+          url: `remove/${id}`,
+          method: "PUT",
+          body: member,
+          credentials: "include",
+      }),
+      invalidatesTags: ["ride"],
+    }),
   }),
 });
 
@@ -107,5 +116,6 @@ export const {
   useDeleteRideMutation,
   useJoinRideMutation,
   useLazyGetAllSourcesQuery,
-  useLazyGetAllDestinationsQuery
+  useLazyGetAllDestinationsQuery,
+  useRemoveMemberFromRideMutation
 } = rideAPI;

@@ -57,7 +57,7 @@ const authSlice = createSlice({
         state.user = action.payload.user
         state.isAuthenticated = true
         state.isVerified = false
-        toast.success("Signup successful! Please verify your email.")
+        toast.success("Signup successfull! Please verify your email.")
       })
       .addCase(userSignup.rejected, (state, action) => {
         toast.error(action.error.message)
@@ -66,7 +66,7 @@ const authSlice = createSlice({
         state.user = action.payload.user
         state.isAuthenticated = true
         state.isVerified = action.payload.user.isVerified
-        toast.success("Login successful!")
+        toast.success(`Welcome Back ${action.payload.user.name}`)
       })
       .addCase(userLogin.rejected, (state, action) => {
         toast.error(action.error.message)

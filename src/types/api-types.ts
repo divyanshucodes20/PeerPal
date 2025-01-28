@@ -90,11 +90,11 @@ export type DeleteProjectRequest = {
 }
 export type AddMemberProjectRequest = {
 id: string;
-members:User[];
+membersId:string[];
 }
 export type RemoveMemberProjectRequest = {
 id: string;
-member:User;
+member:string;
 };
 export type ProjectSuggestionsResponse = {
   success: boolean;
@@ -120,6 +120,7 @@ isProject: boolean;
 export type LearnerResponse = {
   success: boolean;
   learner: Learner;
+  groupChat?: string;
 };
 export type NewLearnerRequest = {
   formData: FormData;

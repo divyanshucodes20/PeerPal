@@ -168,6 +168,22 @@ const api = createApi({
       }),
       invalidatesTags: ["Chat"],
     }),
+    editMyProfile: builder.mutation({
+      query: (formData) => ({
+        url: "user/edit",
+        method: "PUT",
+        credentials: "include",
+        body:formData,
+      }),
+      invalidatesTags: ["User"],
+    }),
+    getMyProfile: builder.query({
+      query: () => ({
+        url: "user/me",
+        credentials: "include",
+      }),
+      providesTags: ["User"],
+    }),
   }),
 });
 
@@ -190,4 +206,6 @@ export const {
   useDeleteChatMutation,
   useLeaveGroupMutation,
   useChangeAdminMutation,
+  useEditMyProfileMutation,
+  useGetMyProfileQuery,
 } = api;

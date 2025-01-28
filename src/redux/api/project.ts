@@ -71,10 +71,10 @@ export const projectAPI = createApi({
         providesTags: ["project"],
     }),
     addMemberToProject: builder.mutation<MessageResponse,AddMemberProjectRequest>({
-        query: ({id,members}) => ({
+        query: ({id,membersId}) => ({
             url: `add/${id}`,
             method: "PUT",
-            body: members,
+            body:{membersId},
             credentials: "include",
         }),
         invalidatesTags: ["project"],
@@ -83,7 +83,7 @@ export const projectAPI = createApi({
         query: ({id,member}) => ({
             url: `remove/${id}`,
             method: "PUT",
-            body: member,
+            body:{member},
             credentials: "include",
         }),
         invalidatesTags: ["project"],
@@ -100,8 +100,6 @@ export const projectAPI = createApi({
 
 export const {
   useProjectDetailsQuery,
-  useAllProjectsOfUserQuery,
-  useAllUserJoinedProjectsQuery,
   useNewProjectMutation,
   useUpdateProjectMutation,
   useDeleteProjectMutation,
@@ -109,4 +107,6 @@ export const {
   useAddMemberToProjectMutation,
   useRemoveMemberFromProjectMutation,
   useGetUserOtherThanMembersQuery,
+  useAllProjectsOfUserQuery,
+  useAllUserJoinedProjectsQuery,
 } = projectAPI;

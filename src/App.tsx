@@ -6,9 +6,9 @@ import { useSelector } from "react-redux"
 import Loader from "./components/loader"
 import ProtectedRoute from "./components/protected-route"
 import Footer from "./components/Footer"
+import { Toaster } from "react-hot-toast"
 
 const Navigation = lazy(() => import("./components/Navigation"))
-const HomePage = lazy(() => import("./components/HomePage"))
 const LoginPage = lazy(() => import("./components/LoginPage"))
 const SignupPage = lazy(() => import("./components/SignupPage"))
 const LearnersSection = lazy(() => import("./components/LearnersSection"))
@@ -28,7 +28,6 @@ const GoalsSection = lazy(() => import("./components/GoalsSection"))
 const CreateLearnerRequest = lazy(() => import("./components/CreateLearnerRequest"))
 const CreateRoommateRequest = lazy(() => import("./components/CreateRoommateRequest"))
 const CreateRideRequest = lazy(() => import("./components/CreateRideRequest"))
-const MyLearningRequests = lazy(() => import("./components/MyLearningRequests"))
 const MyRoommateRequests = lazy(() => import("./components/MyRoommateRequests"))
 const MyRideRequests = lazy(() => import("./components/MyRideRequests"))
 const VerificationPage = lazy(() => import("./pages/VerificationPage"))
@@ -36,6 +35,11 @@ const RoommateDetailsPage=lazy(()=>import("./pages/RoommateDetails"))
 const RideDetailsPage=lazy(()=>import("./components/RideDetailsPage"))
 const LearnerDetailsPage=lazy(()=>import("./pages/LearnerDetails"))
 const LinkToExisitingProject=lazy(()=>import("./pages/LinkToExistingProject"))
+const Dashboard = lazy(() => import("./pages/DashBoard"))
+const ProjectDetails = lazy(() => import("./pages/MyProjectDetails"))
+const RideDetails = lazy(() => import("./pages/MyRideDetails"))
+const LearningRequestDetails = lazy(() => import("./pages/MyLearnerDetails"))
+const AddMembers = lazy(() => import("./components/dialog/AddMembers"))
 
 const lightTheme = {
   background: "#f7fafc",
@@ -84,7 +88,7 @@ const App: React.FC = () => {
                 <Route
                   path="/"
                   element={
-                    isAuthenticated ? isVerified ? <HomePage /> : <Navigate to="/verify" replace /> : <LandingPage />
+                    isAuthenticated ? isVerified ? <Dashboard/> : <Navigate to="/verify" replace /> : <LandingPage />
                   }
                 />
 
@@ -108,6 +112,10 @@ const App: React.FC = () => {
                   <Route path="/learners/isProject/:id" element={<LinkToExisitingProject />} />
                   <Route path="/roommates" element={<RoommatesSection />} />
                   <Route path="/roommates/:id" element={<RoommateDetailsPage />} />
+                  <Route path="/my/project/:id" element={<ProjectDetails />} />
+        <Route path="/my/ride/:id" element={<RideDetails />} />
+        <Route path="/my/learning-request/:id" element={<LearningRequestDetails />} />
+        <Route path="/add-members/:id" element={<AddMembers />} />
                   <Route path="/rides" element={<RidesSection />} />
                   <Route path="/rides/:id" element={<RideDetailsPage />} />
                   <Route path="/chat" element={<ChatSection />} />
@@ -121,7 +129,6 @@ const App: React.FC = () => {
                   <Route path="/request/roommate" element={<CreateRoommateRequest />} />
                   <Route path="/request/ride" element={<CreateRideRequest />} />
                   <Route path="/chat/create-group" element={<CreateGroup />} />
-                  <Route path="/my-learning-requests" element={<MyLearningRequests />} />
                   <Route path="/my-roommate-requests" element={<MyRoommateRequests />} />
                   <Route path="/my-ride-requests" element={<MyRideRequests />} />
                 </Route>
@@ -132,6 +139,7 @@ const App: React.FC = () => {
             </ContentContainer>
             <Footer isDarkMode={isDarkMode} />
           </Suspense>
+          <Toaster position="bottom-center"/>
         </AppContainer>
       </Router>
     </ThemeProvider>

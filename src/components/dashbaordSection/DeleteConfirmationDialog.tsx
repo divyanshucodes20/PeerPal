@@ -1,0 +1,86 @@
+import type React from "react"
+import styled from "styled-components"
+import { useDeleteProjectMutation } from "../../redux/api/project";
+import { toast } from "react-hot-toast"
+
+const DialogOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`
+
+const DialogContent = styled.div`
+  background-color: ${(props) => props.theme.background};
+  padding: 2rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+`
+
+const Button = styled.button`
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+`
+
+const DeleteButton = styled(Button)`
+  background-color:red;
+
+  &:hover {
+    background-color:darkerred;
+  }
+`
+
+const CancelButton = styled(Button)`
+  background-color: ${(props) => props.theme.secondary};
+  color: ${(props) => props.theme.textLight};
+
+  &:hover {
+    background-color: ${(props) => props.theme.secondaryDark};
+  }
+`
+
+interface DeleteConfirmationDialogProps {
+  itemType: string
+  itemId: string
+  onClose: () => void
+}
+
+const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({ itemType, itemId, onClose }) => {
+  const [deleteProject] = useDeleteProjectMutation()
+
+  const handleDelete = async () => {
+    try {
+      await deleteProject({ id: itemId }).unwrap()
+      toast.success(`${itemType} deleted successfully`)
+      onClose()
+    } catch (error) {
+      toast.error(`Failed to delete ${itemType}`)
+    }
+  }
+
+  return (
+    <DialogOverlay onClick={onClose}>
+      <DialogContent onClick={(e) => e.stopPropagation()}>
+        <h2>Confirm Deletion</h2>
+        <p>Are you sure you want to delete this {itemType}?</p>
+        <DeleteButton onClick={handleDelete}>Delete</DeleteButton>
+        <CancelButton onClick={onClose}>Cancel</CancelButton>
+      </DialogContent>
+    </DialogOverlay>
+  )
+}
+
+export default DeleteConfirmationDialog
+
