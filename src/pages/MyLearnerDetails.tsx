@@ -7,10 +7,16 @@ import {
   useLearnerDetailsQuery,
   useRemoveMemberFromLearnerRequestMutation,
   useLinkToExistingProjectMutation,
+  useLazyGetFriendsOtherThanLearnerMembersQuery,
+  useAddMemberToLearnerRequestMutation,
+  useLeaveProjectMutation,
 } from "../redux/api/learner"
 import { useGetMyProfileQuery } from "../redux/api/api"
+import AddMembersDialog from "../components/dialog/AddMembers"
+import DeleteConfirmationDialog from "../components/dialog/DeleteConfirm"
 import Loader from "../components/loader"
-import RemoveMemberDialog from "../components/dialog/RemoveMemberDialog"
+import { Friends } from "../types/api-types"
+
 const Container = styled.div`
   max-width: 800px;
   margin: 0 auto;
@@ -81,13 +87,20 @@ const LearningRequestDetails: React.FC = () => {
   const { data: myProfile } = useGetMyProfileQuery({})
   const [removeMember] = useRemoveMemberFromLearnerRequestMutation()
   const [linkToProject] = useLinkToExistingProjectMutation()
+  const [getFriendsOtherThanLearnerMembers] = useLazyGetFriendsOtherThanLearnerMembersQuery()
+  const [addMemberToLearnerRequest] = useAddMemberToLearnerRequestMutation()
+  const [leaveProject] = useLeaveProjectMutation()
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isAddMembersDialogOpen, setIsAddMembersDialogOpen] = useState(false)
+  const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false)
   const [memberToRemove, setMemberToRemove] = useState<string | null>(null)
+  const [otherFriends, setOtherFriends] = useState<Friends[]>([])
 
   if (isLoading) return <Loader/>
   if (isError || !learningRequest) return <div>Error loading learning request details</div>
 
   const isCreator = myProfile?.user._id === learningRequest.learner.creator._id
+  const isMember = learningRequest.learner.members.some((member) => member._id === myProfile?.user._id)
 
   const handleRemoveMember = async (memberId: string) => {
     setMemberToRemove(memberId)
@@ -106,12 +119,43 @@ const LearningRequestDetails: React.FC = () => {
     }
   }
 
+  const handleAddMembers = async () => {
+    try {
+      const response = await getFriendsOtherThanLearnerMembers(learningRequest.learner._id).unwrap()
+      setOtherFriends(response.friends)
+      setIsAddMembersDialogOpen(true)
+    } catch (error) {
+      console.error("Failed to get other friends:", error)
+    }
+  }
+
+  const onAddMembers = async (selectedUsers: string[]) => {
+    try {
+      await addMemberToLearnerRequest({ id: learningRequest.learner._id, membersId: selectedUsers }).unwrap()
+    } catch (error) {
+      console.error("Failed to add members:", error)
+    }
+  }
+
   const handleLinkToProject = async () => {
     try {
       await linkToProject({ id: learningRequest.learner._id, projectId: "" }).unwrap()
       navigate(`/learners/isProject/${learningRequest.learner._id}`)
     } catch (error) {
       console.error("Failed to link to project:", error)
+    }
+  }
+
+  const handleLeaveProject = () => {
+    setIsLeaveDialogOpen(true)
+  }
+
+  const confirmLeaveProject = async () => {
+    try {
+      await leaveProject(learningRequest.learner._id).unwrap()
+      // Redirect to learning requests list or dashboard after leaving
+    } catch (error) {
+      console.error("Failed to leave project:", error)
     }
   }
 
@@ -144,11 +188,9 @@ const LearningRequestDetails: React.FC = () => {
       {isCreator && !learningRequest.learner.isProject && (
         <Section>
           <SectionTitle>Add Members</SectionTitle>
-          <Link to={`/add-members/${learningRequest.learner._id}`}>
-            <Button>
-              <FaUsers /> Add Members
-            </Button>
-          </Link>
+          <Button onClick={handleAddMembers}>
+            <FaUsers /> Add Members
+          </Button>
         </Section>
       )}
       {isCreator && !learningRequest.learner.isProject && (
@@ -159,7 +201,12 @@ const LearningRequestDetails: React.FC = () => {
           </Button>
         </Section>
       )}
-      {learningRequest.learner.isProject && learningRequest.groupChat && (
+      {isMember && !isCreator && (
+        <Section>
+          <Button onClick={handleLeaveProject}>Leave Learning Request</Button>
+        </Section>
+      )}
+      {learningRequest.learner.isProject && (
         <Section>
           <SectionTitle>Group Chat</SectionTitle>
           <Link to={`/chat/${learningRequest.groupChat}`}>
@@ -168,10 +215,24 @@ const LearningRequestDetails: React.FC = () => {
         </Section>
       )}
       {isDeleteDialogOpen && (
-        <RemoveMemberDialog
+        <DeleteConfirmationDialog
           itemType="member"
           onConfirm={confirmRemoveMember}
           onCancel={() => setIsDeleteDialogOpen(false)}
+        />
+      )}
+      {isAddMembersDialogOpen && (
+        <AddMembersDialog
+          users={otherFriends}
+          onClose={() => setIsAddMembersDialogOpen(false)}
+          onAddMembers={onAddMembers}
+        />
+      )}
+      {isLeaveDialogOpen && (
+        <DeleteConfirmationDialog
+          itemType="learning request"
+          onConfirm={confirmLeaveProject}
+          onCancel={() => setIsLeaveDialogOpen(false)}
         />
       )}
     </Container>

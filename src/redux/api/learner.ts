@@ -24,7 +24,7 @@ export const learnerAPI = createApi({
 
     learnerDetails: builder.query<LearnerResponse, string>({
       query: (id) =>({
-        url: `${id}`,
+        url: `get/${id}`,
         credentials: "include",
       }),
       providesTags: ["learner"],
@@ -140,4 +140,5 @@ export const {
   useAddMemberToLearnerRequestMutation,
   useRemoveMemberFromLearnerRequestMutation,
   useLeaveProjectMutation,
+  useLazyGetFriendsOtherThanLearnerMembersQuery
 } = learnerAPI;

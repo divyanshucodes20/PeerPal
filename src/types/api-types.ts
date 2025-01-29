@@ -178,7 +178,7 @@ export type NewLearnerRequestResponse={
   learner:Learner;
   message:string;
 }
-type  Friends={
+export type  Friends={
 _id:string;
 name:string;
 avatar:string;

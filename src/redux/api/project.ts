@@ -114,7 +114,7 @@ export const {
   useGetProjectSuggestionsQuery,
   useAddMemberToProjectMutation,
   useRemoveMemberFromProjectMutation,
-  useGetFriendsOtherThanProjectMembersQuery,
+  useLazyGetFriendsOtherThanProjectMembersQuery,
   useAllProjectsOfUserQuery,
   useAllUserJoinedProjectsQuery,
   useLeaveProjectMutation

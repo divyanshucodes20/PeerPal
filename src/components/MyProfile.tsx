@@ -257,7 +257,7 @@ const MyProfile: React.FC = () => {
             </FormGroup>
           </>
         )}
-        <Button type={isEditing ? "submit" : "button"} onClick={() => !isEditing && setIsEditing(true)}>
+        <Button type="button" onClick={() => setIsEditing(!isEditing)}>
           {isEditing ? (
             <>
               <Save size={18} />
@@ -270,6 +270,12 @@ const MyProfile: React.FC = () => {
             </>
           )}
         </Button>
+        {isEditing && (
+          <Button type="submit">
+            <Save size={18} />
+            Save Changes
+          </Button>
+        )}
       </Form>
     </ProfileContainer>
   )

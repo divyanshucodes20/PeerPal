@@ -12,24 +12,34 @@ const RoommatesGrid = styled.div`
 `
 
 const Roommates: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: createdRequests } = useAllRoommateRequestsOfUserQuery("")
+  const { data: createdRequests } = useAllRoommateRequestsOfUserQuery("");
+  const roommates = createdRequests?.roommates || [];
 
-  const searchedRequests =
-    createdRequests?.roommates.filter((request) => request.location.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    []
+  const searchedRequests = roommates.filter((request) =>
+    request.location?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <SectionLayoutOfRoommate title="My Roommate Requests" searchTerm={searchTerm} setSearchTerm={setSearchTerm}>
+    <SectionLayoutOfRoommate
+      title="My Roommate Requests"
+      searchTerm={searchTerm}
+      setSearchTerm={setSearchTerm}
+    >
       <RoommatesGrid>
-        {searchedRequests.map((request) => (
-          <RoommateCard key={request._id} request={request} isCreator={true} />
-        ))}
+        {searchedRequests.length > 0 ? (
+          searchedRequests.map((request) => (
+            <RoommateCard key={request._id} request={request} isCreator={true} />
+          ))
+        ) : (
+          <p>No roommate requests found.</p>
+        )}
       </RoommatesGrid>
     </SectionLayoutOfRoommate>
-  )
-}
+  );
+};
 
-export default Roommates
+export default Roommates;
+
 

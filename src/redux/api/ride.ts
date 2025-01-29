@@ -36,7 +36,7 @@ export const rideAPI = createApi({
     }),
     rideDetails: builder.query<RideResponse, string>({
       query: (id) =>({
-        url: `${id}`,
+        url: `get/${id}`,
         credentials: "include",
       }),
       providesTags: ["ride"],
@@ -133,5 +133,6 @@ export const {
   useLazyGetAllSourcesQuery,
   useLazyGetAllDestinationsQuery,
   useRemoveMemberFromRideMutation,
-  useGetFriendsOtherThanRideMembersQuery,
+  useLazyGetFriendsOtherThanRideMembersQuery,
+  useLeaveRideMutation
 } = rideAPI;

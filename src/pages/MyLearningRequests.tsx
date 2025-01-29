@@ -3,8 +3,8 @@ import { useState } from "react"
 import styled from "styled-components"
 import { Link } from "react-router-dom"
 import { useAllLearnerRequestsOfUserQuery, useAllUserJoinedLearnerRequestsQuery } from "../redux/api/learner"
-import SectionLayout from "../components/dashbaordSection/SectionLayout"
 import LearningRequestCard from "../components/dashbaordSection/LearnerRequestCard"
+import SectionLayout from "../components/dashbaordSection/SectionLayout"
 
 const LearningRequestsGrid = styled.div`
   display: grid;
@@ -59,7 +59,9 @@ const LearningRequests: React.FC = () => {
             <LearningRequestCard request={request} isCreator={activeTab === "created"} />
             {request.isProject && (
               <ButtonContainer>
-                <Button to={`/my/project/${request._id}`}>Details</Button>
+                <Button as={Link} to={`/my/learning-request/${request._id}`}>
+                  Details
+                </Button>
               </ButtonContainer>
             )}
           </div>

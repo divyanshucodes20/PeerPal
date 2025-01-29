@@ -1,18 +1,30 @@
 import type React from "react"
 import { useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
 import styled from "styled-components"
-import { useAddMemberToProjectMutation, useGetUserOtherThanMembersQuery } from "../../redux/api/project"
-import { useAddMemberToLearnerRequestMutation } from "../../redux/api/learner"
-import { Loader } from "lucide-react"
+import { Friends } from "../../types/api-types"
 
-const Container = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
+const DialogOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 `
 
-const Title = styled.h1`
+const DialogContent = styled.div`
+  background-color: ${(props) => props.theme.background};
+  padding: 2rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+`
+
+const Title = styled.h2`
   color: ${(props) => props.theme.primary};
   margin-bottom: 1rem;
 `
@@ -20,6 +32,8 @@ const Title = styled.h1`
 const UserList = styled.ul`
   list-style-type: none;
   padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
 `
 
 const UserItem = styled.li`
@@ -30,6 +44,12 @@ const UserItem = styled.li`
   border-bottom: 1px solid ${(props) => props.theme.border};
 `
 
+const UserInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`
+
 const Button = styled.button`
   background-color: ${(props) => props.theme.primary};
   color: white;
@@ -37,60 +57,55 @@ const Button = styled.button`
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
+  margin-top: 1rem;
 
   &:hover {
     background-color: ${(props) => props.theme.primaryDark};
   }
 `
 
-const AddMembers: React.FC = () => {
-  const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
-  const { data: otherUsers, isLoading, isError } = useGetUserOtherThanMembersQuery(id || "")
-  const [addMemberToProject] = useAddMemberToProjectMutation()
-  const [addMemberToLearnerRequest] = useAddMemberToLearnerRequestMutation()
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([])
+interface AddMembersDialogProps {
+  users:Friends[]
+  onClose: () => void
+  onAddMembers: (selectedUsers: string[]) => void
+}
 
-  if (isLoading) return <Loader/>
-  if (isError || !otherUsers) return <div>Error loading users</div>
+const AddMembersDialog: React.FC<AddMembersDialogProps> = ({ users, onClose, onAddMembers }) => {
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([])
 
   const handleUserSelect = (userId: string) => {
     setSelectedUsers((prev) => (prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]))
   }
 
-  const handleAddMembers = async () => {
-    try {
-      // Determine if it's a project or learning request based on the URL
-      if (window.location.pathname.includes("project")) {
-        await addMemberToProject({ id: id || "", membersId: selectedUsers }).unwrap()
-      } else {
-        await addMemberToLearnerRequest({ id: id || "", membersId: selectedUsers }).unwrap()
-      }
-      navigate(-1) // Go back to the previous page
-    } catch (error) {
-      console.error("Failed to add members:", error)
-    }
+  const handleAddMembers = () => {
+    onAddMembers(selectedUsers)
+    onClose()
   }
 
   return (
-    <Container>
-      <Title>Add Members</Title>
-      <UserList>
-        {otherUsers.users.map((user) => (
-          <UserItem key={user._id}>
-            <span>{user.name}</span>
-            <Button onClick={() => handleUserSelect(user._id)}>
-              {selectedUsers.includes(user._id) ? "Selected" : "Select"}
-            </Button>
-          </UserItem>
-        ))}
-      </UserList>
-      <Button onClick={handleAddMembers} disabled={selectedUsers.length === 0}>
-        Add Selected Members
-      </Button>
-    </Container>
+    <DialogOverlay onClick={onClose}>
+      <DialogContent onClick={(e) => e.stopPropagation()}>
+        <Title>Add Members</Title>
+        <UserList>
+          {users.map((user) => (
+            <UserItem key={user._id}>
+              <UserInfo>
+                <img src={user.avatar} alt={user.name} />
+                <span>{user.name}</span>
+              </UserInfo>
+              <Button onClick={() => handleUserSelect(user._id)}>
+                {selectedUsers.includes(user._id) ? "Selected" : "Select"}
+              </Button>
+            </UserItem>
+          ))}
+        </UserList>
+        <Button onClick={handleAddMembers} disabled={selectedUsers.length === 0}>
+          Add Selected Members
+        </Button>
+      </DialogContent>
+    </DialogOverlay>
   )
 }
 
-export default AddMembers
+export default AddMembersDialog
 

@@ -39,7 +39,6 @@ const Dashboard = lazy(() => import("./pages/DashBoard"))
 const ProjectDetails = lazy(() => import("./pages/MyProjectDetails"))
 const RideDetails = lazy(() => import("./pages/MyRideDetails"))
 const LearningRequestDetails = lazy(() => import("./pages/MyLearnerDetails"))
-const AddMembers = lazy(() => import("./components/dialog/AddMembers"))
 
 const lightTheme = {
   background: "#f7fafc",
@@ -115,7 +114,6 @@ const App: React.FC = () => {
                   <Route path="/my/project/:id" element={<ProjectDetails />} />
         <Route path="/my/ride/:id" element={<RideDetails />} />
         <Route path="/my/learning-request/:id" element={<LearningRequestDetails />} />
-        <Route path="/add-members/:id" element={<AddMembers />} />
                   <Route path="/rides" element={<RidesSection />} />
                   <Route path="/rides/:id" element={<RideDetailsPage />} />
                   <Route path="/chat" element={<ChatSection />} />

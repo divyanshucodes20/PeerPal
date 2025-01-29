@@ -2,11 +2,18 @@ import type React from "react"
 import { useState } from "react"
 import { useParams } from "react-router-dom"
 import styled from "styled-components"
-import { FaTrash } from "react-icons/fa"
-import { useRideDetailsQuery, useRemoveMemberFromRideMutation } from "../redux/api/ride"
+import { FaTrash, FaUsers } from "react-icons/fa"
+import {
+  useRideDetailsQuery,
+  useRemoveMemberFromRideMutation,
+  useLazyGetFriendsOtherThanRideMembersQuery,
+  useLeaveRideMutation,
+} from "../redux/api/ride"
 import { useGetMyProfileQuery } from "../redux/api/api"
+import { Friends } from "../types/api-types"
 import Loader from "../components/loader"
-import RemoveMemberDialog from "../components/dialog/RemoveMemberDialog"
+import DeleteConfirmationDialog from "../components/dialog/DeleteConfirm"
+import AddMembersDialog from "../components/dialog/AddMembers"
 
 const Container = styled.div`
   max-width: 800px;
@@ -57,18 +64,41 @@ const RemoveButton = styled.button`
   }
 `
 
+const Button = styled.button`
+  background-color: ${(props) => props.theme.primary};
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  &:hover {
+    background-color: ${(props) => props.theme.primaryDark};
+  }
+`
+
+const UserInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`
+
 const RideDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const { data: ride, isLoading, isError } = useRideDetailsQuery(id || "")
   const { data: myProfile } = useGetMyProfileQuery({})
   const [removeMember] = useRemoveMemberFromRideMutation()
+  const [getFriendsOtherThanRideMembers] = useLazyGetFriendsOtherThanRideMembersQuery()
+  const [leaveRide] = useLeaveRideMutation()
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false)
   const [memberToRemove, setMemberToRemove] = useState<string | null>(null)
+  const [otherFriends, setOtherFriends] = useState<Friends[]>([])
 
-  if (isLoading) return <Loader />
+  if (isLoading) return <Loader/>
   if (isError || !ride) return <div>Error loading ride details</div>
 
   const isCreator = myProfile?.user._id === ride.ride.creator._id
+  const isMember = ride.ride.members.some((member) => member._id === myProfile?.user._id)
 
   const handleRemoveMember = async (memberId: string) => {
     setMemberToRemove(memberId)
@@ -84,6 +114,19 @@ const RideDetails: React.FC = () => {
       } catch (error) {
         console.error("Failed to remove member:", error)
       }
+    }
+  }
+
+  const handleLeaveRide = () => {
+    setIsLeaveDialogOpen(true)
+  }
+
+  const confirmLeaveRide = async () => {
+    try {
+      await leaveRide(ride.ride._id).unwrap()
+      // Redirect to rides list or dashboard after leaving
+    } catch (error) {
+      console.error("Failed to leave ride:", error)
     }
   }
 
@@ -108,7 +151,10 @@ const RideDetails: React.FC = () => {
         <MemberList>
           {ride.ride.members.map((member) => (
             <MemberItem key={member._id}>
-              {member.name}
+              <UserInfo>
+                  <img src={String(member.avatar)} alt={member.name} />
+                <span>{member.name}</span>
+              </UserInfo>
               {isCreator && member._id !== ride.ride.creator._id && (
                 <RemoveButton onClick={() => handleRemoveMember(member._id)}>
                   <FaTrash />
@@ -118,11 +164,23 @@ const RideDetails: React.FC = () => {
           ))}
         </MemberList>
       </Section>
+      {isMember && !isCreator && (
+        <Section>
+          <Button onClick={handleLeaveRide}>Leave Ride</Button>
+        </Section>
+      )}
       {isDeleteDialogOpen && (
-        <RemoveMemberDialog
+        <DeleteConfirmationDialog
           itemType="member"
           onConfirm={confirmRemoveMember}
           onCancel={() => setIsDeleteDialogOpen(false)}
+        />
+      )}
+      {isLeaveDialogOpen && (
+        <DeleteConfirmationDialog
+          itemType="ride"
+          onConfirm={confirmLeaveRide}
+          onCancel={() => setIsLeaveDialogOpen(false)}
         />
       )}
     </Container>
