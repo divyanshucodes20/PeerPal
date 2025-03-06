@@ -187,7 +187,10 @@ export type OtherMembersResponse={
   success:boolean;
   friends:Friends[];
 }
-
+export type SameMemberResponse{
+  success:boolean;
+  freinds:Friends'
+}
 
 
 
